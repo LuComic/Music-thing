@@ -5,6 +5,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -12,7 +13,10 @@ export default function Home() {
       <Carousel className="w-3/4 md:w-[20%]" opts={{ loop: true }}>
         <CarouselContent>
           <CarouselItem>
-            <button className="flex-col w-full flex items-start justify-start gap-4 cursor-pointer">
+            <Link
+              className="flex-col w-full flex items-start justify-start gap-4 cursor-pointer"
+              href="/songs/song_template"
+            >
               <div className="w-full rounded-xl aspect-square bg-slate-300"></div>
               <div className="flex flex-col items-start justify-self-start w-full">
                 <h1 className="text-left text-2xl text-white">
@@ -22,10 +26,13 @@ export default function Home() {
                   Jimi Hendrix
                 </h2>
               </div>
-            </button>
+            </Link>
           </CarouselItem>
           <CarouselItem>
-            <button className="flex-col w-full flex items-start justify-start gap-4 cursor-pointer">
+            <Link
+              className="flex-col w-full flex items-start justify-start gap-4 cursor-pointer"
+              href="songs/song_template"
+            >
               <div className="w-full rounded-xl aspect-square bg-slate-300"></div>
               <div className="flex flex-col items-start justify-self-start w-full">
                 <h1 className="text-left text-2xl text-white">
@@ -33,7 +40,7 @@ export default function Home() {
                 </h1>
                 <h2 className="text-left text-lg text-slate-400">Nirvana</h2>
               </div>
-            </button>
+            </Link>
           </CarouselItem>
         </CarouselContent>
         <CarouselPrevious className="cursor-pointer" />
