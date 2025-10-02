@@ -22,19 +22,19 @@ export default function Page() {
             first cymbal swell to the final wail.
           </p>
           <dl className="grid gap-4 sm:grid-cols-2">
-            <div className="flex flex-col border border-slate-800 rounded-2xl p-4">
+            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
               <dt className="text-slate-400 text-xs uppercase tracking-wide">
                 Album
               </dt>
               <dd className="text-white text-base">Electric Ladyland (1968)</dd>
             </div>
-            <div className="flex flex-col border border-slate-800 rounded-2xl p-4">
+            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
               <dt className="text-slate-400 text-xs uppercase tracking-wide">
                 Label
               </dt>
               <dd className="text-white text-base">Reprise Records</dd>
             </div>
-            <div className="flex flex-col border border-slate-800 rounded-2xl p-4">
+            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
               <dt className="text-slate-400 text-xs uppercase tracking-wide">
                 Produced By
               </dt>
@@ -42,7 +42,7 @@ export default function Page() {
                 Jimi Hendrix &amp; Chas Chandler
               </dd>
             </div>
-            <div className="flex flex-col border border-slate-800 rounded-2xl p-4">
+            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
               <dt className="text-slate-400 text-xs uppercase tracking-wide">
                 Running Time
               </dt>
