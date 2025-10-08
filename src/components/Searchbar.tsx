@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 interface SearchbarProps {
   closeSearching: () => void;
@@ -25,8 +25,14 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
   let [albumSearch, setAlbumSearch] = useState(false);
 
   return (
-    <div className="w-screen h-screen bg-black/40 backdrop-blur-sm fixed top left-0 right-0 overscroll-none flex items-center justify-center z-30">
-      <div className="flex flex-col gap-4 items-center justify-center w-full max-w-xl">
+    <div
+      onClick={closeSearching}
+      className="w-screen h-screen bg-black/40 backdrop-blur-sm fixed top left-0 right-0 overscroll-none flex items-center justify-center z-30"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="flex flex-col gap-4 items-center justify-center w-full max-w-xl"
+      >
         <div className="flex w-full max-w-xl items-center gap-2">
           <Input
             type="text"
@@ -42,33 +48,30 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
           </Button>
         </div>
         <div className="flex w-full items-start justify-start gap-2">
-          <Button
-            variant="outline"
+          <button
             onClick={() => setArtistSearch(!artistSearch)}
-            className={`cursor-pointer text-base px-3 py-1 bg-black/40 text-white ${
-              artistSearch && "bg-white text-black"
+            className={`cursor-pointer text-base text-white rounded-lg border-white border-1 hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
+              artistSearch && "bg-white !text-black"
             }`}
           >
             Artist
-          </Button>
-          <Button
-            variant="outline"
+          </button>
+          <button
             onClick={() => setSongSearch(!songSearch)}
-            className={`cursor-pointer text-base px-3 py-1 bg-black/40 text-white ${
-              songSearch && "bg-white text-black"
+            className={`cursor-pointer text-base text-white rounded-lg border-white border-1 hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
+              songSearch && "bg-white !text-black"
             }`}
           >
             Song
-          </Button>
-          <Button
-            variant="outline"
+          </button>
+          <button
             onClick={() => setAlbumSearch(!albumSearch)}
-            className={`cursor-pointer text-base px-3 py-1 bg-black/40 text-white ${
-              albumSearch && "bg-white text-black"
+            className={`cursor-pointer text-base text-white rounded-lg border-white border-1 hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
+              albumSearch && "bg-white !text-black"
             }`}
           >
             Album
-          </Button>
+          </button>
         </div>
       </div>
     </div>
