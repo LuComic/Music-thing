@@ -15,7 +15,7 @@ import { SlidersHorizontal } from "lucide-react";
 const FilterWithDrawer = () => {
   return (
     <Drawer>
-      <DrawerTrigger className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center cursor-pointer">
+      <DrawerTrigger className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center cursor-pointer outline-none">
         <SlidersHorizontal color="currentColor" className="hidden md:inline" />
         Filter
       </DrawerTrigger>
@@ -24,13 +24,13 @@ const FilterWithDrawer = () => {
           <DrawerHeader>
             <DrawerTitle className="text-white">Filter Your Music</DrawerTitle>
           </DrawerHeader>
-          <div className="grid grid-cols-2 gap-2 md:gap-4 items-center justify-start overflow-y-scroll">
+          <div className="grid grid-cols-2 gap-2 md:gap-4 items-between justify-start overflow-y-scroll">
             <div className="flex flex-col gap-2">
               <p className="mb-2 font-semibold">Genres</p>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="rock"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="rock"
@@ -39,10 +39,10 @@ const FilterWithDrawer = () => {
                   Rock
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="indie"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="indie"
@@ -51,10 +51,10 @@ const FilterWithDrawer = () => {
                   Indie
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="pop"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="pop"
@@ -63,10 +63,10 @@ const FilterWithDrawer = () => {
                   Pop
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="hiphop"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="hiphop"
@@ -75,10 +75,10 @@ const FilterWithDrawer = () => {
                   Hip Hop
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="jazz"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="jazz"
@@ -87,10 +87,10 @@ const FilterWithDrawer = () => {
                   Jazz
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="electronic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="electronic"
@@ -99,10 +99,10 @@ const FilterWithDrawer = () => {
                   Electronic
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="country"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="country"
@@ -111,10 +111,10 @@ const FilterWithDrawer = () => {
                   Country
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="rnb"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="rnb"
@@ -123,10 +123,10 @@ const FilterWithDrawer = () => {
                   R&B
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="metal"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="metal"
@@ -135,10 +135,10 @@ const FilterWithDrawer = () => {
                   Metal
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="classical"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="classical"
@@ -147,10 +147,10 @@ const FilterWithDrawer = () => {
                   Classical
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="folk"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="folk"
@@ -159,10 +159,10 @@ const FilterWithDrawer = () => {
                   Folk
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="blues"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="blues"
@@ -171,10 +171,10 @@ const FilterWithDrawer = () => {
                   Blues
                 </Label>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="soul"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
                 <Label
                   htmlFor="soul"
@@ -184,163 +184,163 @@ const FilterWithDrawer = () => {
                 </Label>
               </div>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 text-right">
               <p className="mb-2 font-semibold">Mood</p>
-              <div className="flex items-center gap-3">
-                <Checkbox
-                  id="energetic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
-                />
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="energetic"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Energetic
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="chill"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="energetic"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="chill"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Chill
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="happy"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="chill"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="happy"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Happy
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="melancholic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="happy"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="melancholic"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Melancholic
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="romantic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="melancholic"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="romantic"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Romantic
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="aggressive"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="romantic"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="aggressive"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Aggressive
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="relaxing"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="aggressive"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="relaxing"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Relaxing
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="uplifting"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="relaxing"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="uplifting"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Uplifting
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="dark"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="uplifting"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="dark"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Dark
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="nostalgic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="dark"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="nostalgic"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Nostalgic
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="dreamy"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="nostalgic"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="dreamy"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Dreamy
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="intense"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="dreamy"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="intense"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Intense
                 </Label>
-              </div>
-              <div className="flex items-center gap-3">
                 <Checkbox
-                  id="peaceful"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800"
+                  id="intense"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
                 />
+              </div>
+              <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
                 <Label
                   htmlFor="peaceful"
                   className="text-lg font-normal cursor-pointer"
                 >
                   Peaceful
                 </Label>
+                <Checkbox
+                  id="peaceful"
+                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                />
               </div>
             </div>
           </div>

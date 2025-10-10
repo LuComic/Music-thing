@@ -42,7 +42,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
           <Button
             type="submit"
             variant="outline"
-            className="cursor-pointer text-lg px-4 py-3"
+            className="cursor-pointer text-lg px-4 py-3 hover:bg-gray-300 transition"
           >
             Search
           </Button>
