@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import { useSpotifyToken } from "@/context/SpotifyTokenContext";
+import Link from "next/link";
 
 interface SearchbarProps {
   closeSearching: () => void;
@@ -24,21 +26,16 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
   const [songSearch, setSongSearch] = useState(true);
   const [albumSearch, setAlbumSearch] = useState(false);
   const [searchInput, setSearch] = useState("");
-  const [accessToken, setAccessToken] = useState("");
+  const { accessToken } = useSpotifyToken();
 
   const [artistSearchResults, setArtistSearchResults] = useState([]);
   const [songSearchResults, setSongSearchResults] = useState([]);
   const [albumSearchResults, setAlbumSearchResults] = useState([]);
 
-  useEffect(() => {
-    // Use the POST from src/app/api/spotify-token/route.ts
-    fetch("/api/spotify-token", { method: "POST" })
-      .then((result) => result.json())
-      .then((data) => setAccessToken(data.access_token));
-  }, []);
-
   // Search
   async function search() {
+    if (!accessToken) return;
+
     let searchParams = {
       method: "GET",
       headers: {
@@ -61,15 +58,31 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
       )
         .then((response) => response.json())
         .then((data) => {
-          setArtistSearchResults(
-            data.artists ? data.artists.items.slice(0, 6) : []
-          );
-          setAlbumSearchResults(
-            data.albums ? data.albums.items.slice(0, 6) : []
-          );
-          setSongSearchResults(
-            data.tracks ? data.tracks.items.slice(0, 6) : []
-          );
+          if (
+            (data.artists && data.albums) ||
+            (data.artists && data.tracks) ||
+            (data.albums && data.tracks)
+          ) {
+            setArtistSearchResults(
+              data.artists ? data.artists.items.slice(0, 3) : []
+            );
+            setAlbumSearchResults(
+              data.albums ? data.albums.items.slice(0, 3) : []
+            );
+            setSongSearchResults(
+              data.tracks ? data.tracks.items.slice(0, 3) : []
+            );
+          } else {
+            setArtistSearchResults(
+              data.artists ? data.artists.items.slice(0, 6) : []
+            );
+            setAlbumSearchResults(
+              data.albums ? data.albums.items.slice(0, 6) : []
+            );
+            setSongSearchResults(
+              data.tracks ? data.tracks.items.slice(0, 6) : []
+            );
+          }
         });
     }
   }
@@ -135,61 +148,65 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
         </div>
         <div className="flex flex-col items-start justify-start gap-2 w-full overflow-x-scroll">
           {artistSearchResults.map((artist: any) => (
-            <button
+            <Link
               className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
               key={artist.id}
+              onClick={closeSearching}
+              href={"/artists?id=" + artist.id}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-full overflow-hidden">
                 <img
-                  className="object-cover aspect-square rounded-none"
-                  src={artist.images?.at(0)?.url}
+                  className="object-cover aspect-square rounded-[1px]"
+                  src={artist.images[0].url}
                 />
               </div>
               <div className="flex items-center justify-start gap-2 text-left">
                 <p className="text-white">{artist.name}</p>
                 <p className="text-slate-400">| Artist</p>
               </div>{" "}
-            </button>
+            </Link>
           ))}
 
-          {albumSearchResults.map((album: any) => (
-            <button
+          {songSearchResults.map((song: any) => (
+            <Link
               className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
-              key={album.id}
+              key={song.id}
+              href={"/songs?id=" + song.id}
+              onClick={closeSearching}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
                 <img
-                  className="object-cover aspect-square rounded-none"
-                  src={album.images?.at(0)?.url}
+                  className="object-cover aspect-square rounded-[1px]"
+                  src={song.album.images[0].url}
+                />
+              </div>
+              <div className="flex items-center justify-start gap-2 text-left">
+                <p className="text-white">{song.name}</p>
+                <p className="text-slate-400">Song | {song.artists[0].name}</p>
+              </div>
+            </Link>
+          ))}
+
+          {albumSearchResults.map((album: any) => (
+            <Link
+              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
+              key={album.id}
+              onClick={closeSearching}
+              href={"/albums?id=" + album.id}
+            >
+              <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
+                <img
+                  className="object-cover aspect-square rounded-[1px]"
+                  src={album.images[0].url}
                 />
               </div>
               <div className="flex items-center justify-start gap-2 text-left">
                 <p className="text-white">{album.name}</p>
                 <p className="text-slate-400">
-                  Album | {album.artists.at(0).name}
+                  Album | {album.artists[0].name}
                 </p>
               </div>
-            </button>
-          ))}
-
-          {songSearchResults.map((song: any) => (
-            <button
-              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
-              key={song.id}
-            >
-              <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
-                <img
-                  className="object-cover aspect-square rounded-none"
-                  src={song.album.images?.at(0)?.url}
-                />
-              </div>
-              <div className="flex items-center justify-start gap-2 text-left">
-                <p className="text-white">{song.name}</p>
-                <p className="text-slate-400">
-                  Song | {song.artists.at(0).name}
-                </p>
-              </div>
-            </button>
+            </Link>
           ))}
         </div>
       </div>
