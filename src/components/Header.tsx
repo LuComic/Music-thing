@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { Search, Bookmark, Compass, House } from "lucide-react";
 import { Searchbar } from "./Searchbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import FilterWithDrawer from "./FilterWithDrawer";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
 export default function Header() {
   let [searching, setSearching] = useState(false);
@@ -14,6 +15,14 @@ export default function Header() {
   function closeSearching() {
     setSearching(false);
   }
+
+  useEffect(() => {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "k" && e.metaKey) {
+        setSearching(true);
+      }
+    });
+  }, []);
 
   return (
     <>
@@ -37,6 +46,10 @@ export default function Header() {
           >
             <Search color="currentColor" className="hidden md:inline" />
             Search
+            <KbdGroup>
+              <Kbd className="bg-white/20 text-white">⌘</Kbd>
+              <Kbd className="bg-white/20 text-white">K</Kbd>
+            </KbdGroup>
           </button>
           <Link
             href="#"

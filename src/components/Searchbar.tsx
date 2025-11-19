@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import Link from "next/link";
+import { mbApi } from "@/lib/musicbrainz";
+import { redirect } from "next/navigation";
 
 interface SearchbarProps {
   closeSearching: () => void;
@@ -10,6 +12,9 @@ interface SearchbarProps {
 
 export const Searchbar = ({ closeSearching }: SearchbarProps) => {
   useEffect(() => {
+    const input = document.getElementById("search-input");
+    input?.focus();
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         closeSearching();
@@ -50,6 +55,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     if (albumSearch) searchTypes.push("album");
 
     if (searchTypes.length > 0) {
+      // The Spotify search
       await fetch(
         `https://api.spotify.com/v1/search?q=${searchInput}&type=${searchTypes.join(
           ","
@@ -87,10 +93,36 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     }
   }
 
+  // MusicBrainz search
+  async function searchAndGoToPage(entity: any) {
+    if (!entity) return;
+
+    // Build the query with artist, track name, and release year
+    const query = `artist:"${entity.artists[0].name}" AND recording:"${entity.name}"`;
+
+    const musicBrainzResult = await mbApi.search("recording", {
+      query,
+      // Increase limit to get more results in case the first one isn't a match
+      limit: 5,
+    });
+
+    // Log for debugging
+    console.log("Spotify track:", entity);
+    console.log("MusicBrainz results:", musicBrainzResult.recordings[0]);
+
+    closeSearching();
+
+    if (musicBrainzResult.recordings[0]) {
+      redirect("/songs?spotify_id=" + entity.id + "&musicbrainz_id=" + musicBrainzResult.recordings[0].id)
+    } else {
+      redirect("/songs?spotify_id=" + entity.id)
+    }
+  }
+
   return (
     <div
       onClick={closeSearching}
-      className="w-screen h-screen bg-black/40 backdrop-blur-sm fixed top left-0 right-0 overscroll-none flex items-center justify-center z-30"
+      className="w-screen h-screen bg-black/40 backdrop-blur-sm fixed top le1ft-0 right-0 overscroll-none flex items-center justify-center z-30"
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -100,10 +132,10 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
           <Input
             type="text"
             placeholder="Search for an artist"
-            className="bg-black text-white !text-lg px-4 py-3"
+            id="search-input"
+            className="bg-black text-white text-lg! px-4 py-3"
             onChange={(e) => {
               setSearch(e.target.value);
-              search();
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -123,25 +155,43 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
         <div className="flex w-full items-start justify-start gap-2">
           <button
             onClick={() => setSongSearch(!songSearch)}
-            className={`cursor-pointer text-base text-white rounded-lg border-white border-1 hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
-              songSearch && "bg-white !text-black"
+            className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
+              songSearch && "bg-white text-black!"
             }`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                search();
+              }
+            }}
           >
             Song
           </button>
           <button
             onClick={() => setArtistSearch(!artistSearch)}
-            className={`cursor-pointer text-base text-white rounded-lg border-white border-1 hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
-              artistSearch && "bg-white !text-black"
+            className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
+              artistSearch && "bg-white text-black!"
             }`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                search();
+              }
+            }}
           >
             Artist
           </button>
           <button
             onClick={() => setAlbumSearch(!albumSearch)}
-            className={`cursor-pointer text-base text-white rounded-lg border-white border-1 hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
-              albumSearch && "bg-white !text-black"
+            className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
+              albumSearch && "bg-white text-black!"
             }`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                search();
+              }
+            }}
           >
             Album
           </button>
@@ -168,11 +218,10 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
           ))}
 
           {songSearchResults.map((song: any) => (
-            <Link
+            <button
               className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
               key={song.id}
-              href={"/songs?id=" + song.id}
-              onClick={closeSearching}
+              onClick={() => searchAndGoToPage(song)}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
                 <img
@@ -184,7 +233,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
                 <p className="text-white">{song.name}</p>
                 <p className="text-slate-400">Song | {song.artists[0].name}</p>
               </div>
-            </Link>
+            </button>
           ))}
 
           {albumSearchResults.map((album: any) => (
