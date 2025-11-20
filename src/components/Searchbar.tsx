@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
-import { mbApi } from "@/lib/musicbrainz";
+import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
 
 interface SearchbarProps {
@@ -94,51 +94,11 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     }
   }
 
-  // MusicBrainz search
+  // Navigate to entity page with hybrid Spotify + MusicBrainz search
   async function searchAndGoToPage(entity: any, type: "track" | "artist" | "album") {
     if (!entity) return;
 
-    let musicBrainzId = null;
-    let targetUrl = "";
-
-    if (type === "track") {
-        // Build the query with artist, track name
-        const query = `artist:"${entity.artists[0].name}" AND recording:"${entity.name}"`;
-        const musicBrainzResult = await mbApi.search("recording", {
-            query,
-            limit: 5,
-        });
-        
-        if (musicBrainzResult.recordings[0]) {
-            musicBrainzId = musicBrainzResult.recordings[0].id;
-        }
-        targetUrl = `/songs?spotify_id=${entity.id}${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
-
-    } else if (type === "artist") {
-        const query = `artist:"${entity.name}"`;
-        const musicBrainzResult = await mbApi.search("artist", {
-            query,
-            limit: 1,
-        });
-
-        if (musicBrainzResult.artists[0]) {
-            musicBrainzId = musicBrainzResult.artists[0].id;
-        }
-        targetUrl = `/artists?spotify_id=${entity.id}${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
-
-    } else if (type === "album") {
-        const query = `release:"${entity.name}" AND artist:"${entity.artists[0].name}"`;
-        const musicBrainzResult = await mbApi.search("release", {
-            query,
-            limit: 1,
-        });
-
-        if (musicBrainzResult.releases[0]) {
-            musicBrainzId = musicBrainzResult.releases[0].id;
-        }
-        targetUrl = `/albums?spotify_id=${entity.id}${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
-    }
-
+    const targetUrl = await getHybridNavigationUrl(entity, type);
     closeSearching();
     router.push(targetUrl);
   }

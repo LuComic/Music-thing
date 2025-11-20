@@ -1,10 +1,11 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { mbApi } from "@/lib/musicbrainz";
+import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import {
   Accordion,
   AccordionContent,
@@ -14,12 +15,25 @@ import {
 
 export default function Page() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { accessToken } = useSpotifyToken();
   const spotifyId = searchParams.get("spotify_id");
   const musicbrainzId = searchParams.get("musicbrainz_id");
 
   const [spotifyRes, setSpotifyRes] = useState<any>(null);
   const [musicbrainzRes, setMusicbrainzRes] = useState<any>(null);
+
+  // Handler for hybrid navigation to artist
+  const handleArtistClick = async (artist: any) => {
+    const url = await getHybridNavigationUrl(artist, "artist");
+    router.push(url);
+  };
+
+  // Handler for hybrid navigation to album
+  const handleAlbumClick = async (album: any) => {
+    const url = await getHybridNavigationUrl(album, "album");
+    router.push(url);
+  };
 
   // Fetch Spotify track data
   useEffect(() => {
@@ -80,21 +94,21 @@ export default function Page() {
     <div className="bg-black min-h-screen w-screen flex items-start justify-center p-4 text-white">
       <div className="flex flex-col md:grid grid-cols-3 gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-40">
         <div className="flex flex-col gap-6 col-span-1">
-          <div className="w-full aspect-square rounded-2xl bg-slate-300 overflow-hidden">
+          <Link className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full aspect-square rounded-2xl bg-slate-300 overflow-hidden" target="_blank" href={spotifyRes.external_urls.spotify}>
             <img
               className="rounded-none object-cover aspect-square"
               alt={spotifyRes.name}
               src={spotifyRes.album.images[0].url}
             />
-          </div>
+          </Link>
           <div className="flex flex-col gap-1">
             <h1 className="text-white text-3xl font-semibold">{spotifyRes.name}</h1>
-            <Link
-              href={"/artists?id=" + spotifyRes.artists[0].id}
-              className="text-slate-400 text-xl hover:text-slate-500 transition"
+            <button
+              onClick={() => handleArtistClick(spotifyRes.artists[0])}
+              className="text-slate-400 text-xl hover:text-slate-500 transition text-left cursor-pointer"
             >
               {spotifyRes.artists[0].name}
-            </Link>
+            </button>
           </div>
           {musicbrainzId && musicbrainzRes && musicbrainzRes.tags && musicbrainzRes.tags.length > 0 && (
             <div>
@@ -113,15 +127,15 @@ export default function Page() {
         </div>
         <div className="flex-1 flex flex-col gap-6 text-white col-span-2 overflow-y-scroll">
           <dl className="grid gap-4 sm:grid-cols-2">
-            <Link
-              className="flex flex-col border border-slate-400 rounded-2xl p-4 hover:bg-slate-400/15 transition"
-              href={"/albums?id=" + spotifyRes.album.id}
+            <button
+              className="flex flex-col border border-slate-400 rounded-2xl p-4 hover:bg-slate-400/15 transition text-left cursor-pointer"
+              onClick={() => handleAlbumClick(spotifyRes.album)}
             >
               <dt className="text-slate-400 text-xs uppercase tracking-wide">
                 Album
               </dt>
               <dd className="text-white text-base">{spotifyRes.album.name}</dd>
-            </Link>
+            </button>
             <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
               <dt className="text-slate-400 text-xs uppercase tracking-wide">
                 Release date
