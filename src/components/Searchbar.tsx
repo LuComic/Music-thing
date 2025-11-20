@@ -2,15 +2,16 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
-import Link from "next/link";
 import { mbApi } from "@/lib/musicbrainz";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface SearchbarProps {
   closeSearching: () => void;
 }
 
 export const Searchbar = ({ closeSearching }: SearchbarProps) => {
+  const router = useRouter();
+
   useEffect(() => {
     const input = document.getElementById("search-input");
     input?.focus();
@@ -94,29 +95,52 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
   }
 
   // MusicBrainz search
-  async function searchAndGoToPage(entity: any) {
+  async function searchAndGoToPage(entity: any, type: "track" | "artist" | "album") {
     if (!entity) return;
 
-    // Build the query with artist, track name, and release year
-    const query = `artist:"${entity.artists[0].name}" AND recording:"${entity.name}"`;
+    let musicBrainzId = null;
+    let targetUrl = "";
 
-    const musicBrainzResult = await mbApi.search("recording", {
-      query,
-      // Increase limit to get more results in case the first one isn't a match
-      limit: 5,
-    });
+    if (type === "track") {
+        // Build the query with artist, track name
+        const query = `artist:"${entity.artists[0].name}" AND recording:"${entity.name}"`;
+        const musicBrainzResult = await mbApi.search("recording", {
+            query,
+            limit: 5,
+        });
+        
+        if (musicBrainzResult.recordings[0]) {
+            musicBrainzId = musicBrainzResult.recordings[0].id;
+        }
+        targetUrl = `/songs?spotify_id=${entity.id}${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
 
-    // Log for debugging
-    console.log("Spotify track:", entity);
-    console.log("MusicBrainz results:", musicBrainzResult.recordings[0]);
+    } else if (type === "artist") {
+        const query = `artist:"${entity.name}"`;
+        const musicBrainzResult = await mbApi.search("artist", {
+            query,
+            limit: 1,
+        });
+
+        if (musicBrainzResult.artists[0]) {
+            musicBrainzId = musicBrainzResult.artists[0].id;
+        }
+        targetUrl = `/artists?spotify_id=${entity.id}${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
+
+    } else if (type === "album") {
+        const query = `release:"${entity.name}" AND artist:"${entity.artists[0].name}"`;
+        const musicBrainzResult = await mbApi.search("release", {
+            query,
+            limit: 1,
+        });
+
+        if (musicBrainzResult.releases[0]) {
+            musicBrainzId = musicBrainzResult.releases[0].id;
+        }
+        targetUrl = `/albums?spotify_id=${entity.id}${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
+    }
 
     closeSearching();
-
-    if (musicBrainzResult.recordings[0]) {
-      redirect("/songs?spotify_id=" + entity.id + "&musicbrainz_id=" + musicBrainzResult.recordings[0].id)
-    } else {
-      redirect("/songs?spotify_id=" + entity.id)
-    }
+    router.push(targetUrl);
   }
 
   return (
@@ -198,36 +222,39 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
         </div>
         <div className="flex flex-col items-start justify-start gap-2 w-full overflow-x-scroll">
           {artistSearchResults.map((artist: any) => (
-            <Link
+            <button
               className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
               key={artist.id}
-              onClick={closeSearching}
-              href={"/artists?id=" + artist.id}
+              onClick={() => searchAndGoToPage(artist, "artist")}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-full overflow-hidden">
-                <img
-                  className="object-cover aspect-square rounded-[1px]"
-                  src={artist.images[0].url}
-                />
+                {artist.images && artist.images[0] && (
+                    <img
+                    className="object-cover aspect-square rounded-[1px]"
+                    src={artist.images[0].url}
+                    />
+                )}
               </div>
               <div className="flex items-center justify-start gap-2 text-left">
                 <p className="text-white">{artist.name}</p>
                 <p className="text-slate-400">| Artist</p>
               </div>{" "}
-            </Link>
+            </button>
           ))}
 
           {songSearchResults.map((song: any) => (
             <button
               className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
               key={song.id}
-              onClick={() => searchAndGoToPage(song)}
+              onClick={() => searchAndGoToPage(song, "track")}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
-                <img
-                  className="object-cover aspect-square rounded-[1px]"
-                  src={song.album.images[0].url}
-                />
+                {song.album.images && song.album.images[0] && (
+                    <img
+                    className="object-cover aspect-square rounded-[1px]"
+                    src={song.album.images[0].url}
+                    />
+                )}
               </div>
               <div className="flex items-center justify-start gap-2 text-left">
                 <p className="text-white">{song.name}</p>
@@ -237,17 +264,18 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
           ))}
 
           {albumSearchResults.map((album: any) => (
-            <Link
+            <button
               className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
               key={album.id}
-              onClick={closeSearching}
-              href={"/albums?id=" + album.id}
+              onClick={() => searchAndGoToPage(album, "album")}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
-                <img
-                  className="object-cover aspect-square rounded-[1px]"
-                  src={album.images[0].url}
-                />
+                {album.images && album.images[0] && (
+                    <img
+                    className="object-cover aspect-square rounded-[1px]"
+                    src={album.images[0].url}
+                    />
+                )}
               </div>
               <div className="flex items-center justify-start gap-2 text-left">
                 <p className="text-white">{album.name}</p>
@@ -255,7 +283,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
                   Album | {album.artists[0].name}
                 </p>
               </div>
-            </Link>
+            </button>
           ))}
         </div>
       </div>

@@ -4,16 +4,26 @@ import { useSearchParams } from "next/navigation";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { mbApi } from "@/lib/musicbrainz";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function Page() {
   const searchParams = useSearchParams();
   const { accessToken } = useSpotifyToken();
-  const album_id = searchParams.get("id");
+  const spotifyId = searchParams.get("spotify_id");
+  const musicbrainzId = searchParams.get("musicbrainz_id");
 
-  const [res, setRes] = useState<any>(null);
+  const [spotifyRes, setSpotifyRes] = useState<any>(null);
+  const [musicbrainzRes, setMusicbrainzRes] = useState<any>(null);
 
+  // Fetch Spotify data
   useEffect(() => {
-    if (!accessToken || !album_id) return;
+    if (!accessToken || !spotifyId) return;
 
     async function getAlbum() {
       const searchParams = {
@@ -25,17 +35,40 @@ export default function Page() {
       };
 
       const response = await fetch(
-        `https://api.spotify.com/v1/albums/${album_id}`,
+        `https://api.spotify.com/v1/albums/${spotifyId}`,
         searchParams
       );
       const data = await response.json();
-      setRes(data);
+      console.log("Spotify Album:", data);
+      setSpotifyRes(data);
     }
 
     getAlbum();
-  }, [accessToken, album_id]);
+  }, [accessToken, spotifyId]);
 
-  if (!res) {
+  // Fetch MusicBrainz data
+  useEffect(() => {
+    if (!musicbrainzId) return;
+
+    async function getMusicBrainzAlbum() {
+      try {
+        const release = await mbApi.lookup("release", musicbrainzId, [
+          "artists",
+          "recordings",
+          "tags",
+          "url-rels",
+        ]);
+        console.log("MusicBrainz Album:", release);
+        setMusicbrainzRes(release);
+      } catch (error) {
+        console.error("MusicBrainz fetch error:", error);
+      }
+    }
+
+    getMusicBrainzAlbum();
+  }, [musicbrainzId]);
+
+  if (!spotifyRes || (musicbrainzId && !musicbrainzRes)) {
     return (
       <div className="bg-black h-screen w-screen flex items-center justify-center">
         <p className="text-white">Loading...</p>
@@ -48,94 +81,168 @@ export default function Page() {
       <div className="flex flex-col md:grid grid-cols-3 gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-40">
         <div className="flex flex-col gap-6 col-span-1">
           <div className="w-full aspect-square rounded-2xl bg-slate-300 overflow-hidden">
-            <img
-              className="rounded-none object-cover aspect-square"
-              alt={res.name}
-              src={res.images[0].url}
-            />
+            {spotifyRes.images && spotifyRes.images[0] && (
+              <img
+                className="rounded-none object-cover aspect-square"
+                alt={spotifyRes.name}
+                src={spotifyRes.images[0].url}
+              />
+            )}
           </div>
           <div className="flex flex-col gap-1">
-            <h1 className="text-white text-3xl font-semibold">{res.name}</h1>
-            <h2 className="text-slate-400 text-xl">{res.artists[0].name}</h2>
-          </div>
-        </div>
-        <div className="flex-1 flex flex-col gap-6 text-white col-span-2 md:h-[50vh] overflow-y-scroll">
-          <dl className="grid gap-4 sm:grid-cols-2">
-            <Link
-              className="flex flex-col border border-slate-400 rounded-2xl p-4 hover:bg-slate-400/15 transition"
-              href={"/artists?id=" + res.artists[0].id}
-            >
-              <dt className="text-slate-400 text-xs uppercase tracking-wide">
-                Artist
-              </dt>
-              <dd className="text-white text-base">{res.artists[0].name}</dd>
-            </Link>
-            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
-              <dt className="text-slate-400 text-xs uppercase tracking-wide">
-                Release date
-              </dt>
-              <dd className="text-white text-base">
-                {res.release_date.replaceAll("-", ".")}
-              </dd>
-            </div>
-            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
-              <dt className="text-slate-400 text-xs uppercase tracking-wide">
-                Type
-              </dt>
-              <dd className="text-white text-base">Album</dd>
-            </div>
-            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
-              <dt className="text-slate-400 text-xs uppercase tracking-wide">
-                Tracks
-              </dt>
-              <dd className="text-white text-base">
-                {res.total_tracks}{" "}
-                <p className="inline text-slate-500">
-                  (
-                  {`${Math.floor(
-                    res.tracks.items.reduce(
-                      (sum: number, track: any) => sum + track.duration_ms,
-                      0
-                    ) / 60000
-                  )} min ${Math.floor(
-                    (res.tracks.items.reduce(
-                      (sum: number, track: any) => sum + track.duration_ms,
-                      0
-                    ) %
-                      60000) /
-                      1000
-                  )
-                    .toString()
-                    .padStart(2, "0")} sec`}
-                  )
-                </p>
-              </dd>
-            </div>
-            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
-              <dt className="text-slate-400 text-xs uppercase tracking-wide">
-                Label
-              </dt>
-              <dd className="text-white text-base">{res.label}</dd>
-            </div>
-            <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
-              <dt className="text-slate-400 text-xs uppercase tracking-wide">
-                Popularity on Spotify
-              </dt>
-              <dd className="text-white text-base">{res.popularity}/100</dd>
-            </div>
-          </dl>
-          <h3 className="text-xl">Tracks</h3>
-          <div className="flex flex-col gap-2 text-sm md:text-base items-start justify-start  bg-slate-400/10 rounded-lg p-1">
-            {res.tracks.items.map((track: any) => (
+            <h1 className="text-white text-3xl font-semibold">
+              {spotifyRes.name}
+            </h1>
+            {spotifyRes.artists && spotifyRes.artists[0] && (
               <Link
-                href={"/songs?id=" + track.id}
-                key={track.name}
-                className="p-3 hover:bg-black/40 transition rounded-md w-full text-left"
+                href={"/artists?spotify_id=" + spotifyRes.artists[0].id}
+                className="text-slate-400 text-xl hover:text-slate-500 transition"
               >
-                {track.name}
+                {spotifyRes.artists[0].name}
               </Link>
-            ))}
+            )}
           </div>
+          {musicbrainzRes?.tags && musicbrainzRes.tags.length > 0 && (
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Tags</h2>
+              <div className="flex flex-wrap gap-2">
+                {musicbrainzRes.tags.slice(0, 5).map((tag: any) => (
+                  <span
+                    key={tag.name}
+                    className="bg-[#1DB954]/80 text-white px-2 py-1 rounded-md text-sm"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <div
+          className="flex-1 flex flex-col gap-4 text-white col-span-2 overflow-y-scroll"
+          style={{
+            scrollbarColor: "gray black",
+            scrollbarWidth: "thin",
+          }}
+        >
+          <dl className="grid gap-4 sm:grid-cols-2">
+            {spotifyRes.artists && spotifyRes.artists[0] && (
+              <Link
+                className="flex flex-col border border-slate-400 rounded-2xl p-4 hover:bg-slate-400/15 transition"
+                href={"/artists?spotify_id=" + spotifyRes.artists[0].id}
+              >
+                <dt className="text-slate-400 text-xs uppercase tracking-wide">
+                  Artist
+                </dt>
+                <dd className="text-white text-base">
+                  {spotifyRes.artists[0].name}
+                </dd>
+              </Link>
+            )}
+            {spotifyRes.release_date && (
+              <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
+                <dt className="text-slate-400 text-xs uppercase tracking-wide">
+                  Release Date
+                </dt>
+                <dd className="text-white text-base">
+                  {spotifyRes.release_date.replaceAll("-", ".")}
+                </dd>
+              </div>
+            )}
+            {spotifyRes.album_type && (
+              <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
+                <dt className="text-slate-400 text-xs uppercase tracking-wide">
+                  Type
+                </dt>
+                <dd className="text-white text-base capitalize">
+                  {spotifyRes.album_type}
+                </dd>
+              </div>
+            )}
+            {spotifyRes.total_tracks && (
+              <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
+                <dt className="text-slate-400 text-xs uppercase tracking-wide">
+                  Tracks
+                </dt>
+                <dd className="text-white text-base">
+                  {spotifyRes.total_tracks}
+                </dd>
+              </div>
+            )}
+            {spotifyRes.label && (
+              <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
+                <dt className="text-slate-400 text-xs uppercase tracking-wide">
+                  Label
+                </dt>
+                <dd className="text-white text-base">{spotifyRes.label}</dd>
+              </div>
+            )}
+            {spotifyRes.popularity !== undefined && (
+              <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
+                <dt className="text-slate-400 text-xs uppercase tracking-wide">
+                  Popularity
+                </dt>
+                <dd className="text-white text-base">
+                  {spotifyRes.popularity}/100
+                </dd>
+              </div>
+            )}
+          </dl>
+
+          {spotifyRes.tracks?.items && spotifyRes.tracks.items.length > 0 && (
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="text-xl font-semibold cursor-pointer pt-0 pb-3">
+                  Tracks
+                </AccordionTrigger>
+                <AccordionContent className="text-sm md:text-base bg-slate-400/10 rounded-lg p-1">
+                  {spotifyRes.tracks.items.map((track: any, index: number) => (
+                    <div
+                      key={track.id || index}
+                      className="p-3 hover:bg-black/40 transition rounded-md w-full text-left cursor-pointer"
+                    >
+                      <div className="flex items-center justify-start gap-2">
+                          <span>{track.track_number}.</span>
+                          <span>{track.name}</span>
+                        <span className="text-slate-500">
+                          {Math.floor(track.duration_ms / 60000)}:
+                          {((track.duration_ms % 60000) / 1000)
+                            .toFixed(0)
+                            .padStart(2, "0")}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          )}
+
+          {musicbrainzRes?.relations && (
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="text-xl font-semibold cursor-pointer pt-0 pb-3">
+                  External Links
+                </AccordionTrigger>
+                <AccordionContent className="text-sm md:text-base bg-slate-400/10 rounded-lg p-1">
+                  {musicbrainzRes.relations
+                    .filter((rel: any) => rel.url)
+                    .slice(0, 10)
+                    .map((rel: any, index: number) => (
+                      <a
+                        key={`${rel.url.id}-${index}`}
+                        href={rel.url.resource}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 flex items-center justify-start hover:bg-black/40 transition rounded-md w-full text-left cursor-pointer"
+                      >
+                        {rel.type}
+                      </a>
+                    ))}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          )}
         </div>
       </div>
     </div>
