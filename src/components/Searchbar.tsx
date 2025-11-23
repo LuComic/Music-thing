@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
@@ -28,8 +27,9 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     };
   }, [closeSearching]);
 
+  const [allSearch, setAllSearch] = useState(true);
   const [artistSearch, setArtistSearch] = useState(false);
-  const [songSearch, setSongSearch] = useState(true);
+  const [songSearch, setSongSearch] = useState(false);
   const [albumSearch, setAlbumSearch] = useState(false);
   const [searchInput, setSearch] = useState("");
   const { accessToken } = useSpotifyToken();
@@ -37,6 +37,12 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
   const [artistSearchResults, setArtistSearchResults] = useState([]);
   const [songSearchResults, setSongSearchResults] = useState([]);
   const [albumSearchResults, setAlbumSearchResults] = useState([]);
+
+  useEffect(() => {
+    if (artistSearch || songSearch || albumSearch) {
+      setAllSearch(false);
+    }
+  }, [artistSearch, songSearch, albumSearch]);
 
   // Search
   async function search() {
@@ -50,10 +56,14 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
       },
     };
 
-    const searchTypes = [];
-    if (artistSearch) searchTypes.push("artist");
-    if (songSearch) searchTypes.push("track");
-    if (albumSearch) searchTypes.push("album");
+    let searchTypes = [];
+    if (allSearch) {
+      searchTypes = ["artist", "track", "album"];
+    } else {
+      if (artistSearch) searchTypes.push("artist");
+      if (songSearch) searchTypes.push("track");
+      if (albumSearch) searchTypes.push("album");
+    }
 
     if (searchTypes.length > 0) {
       // The Spotify search
@@ -95,10 +105,28 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
   }
 
   // Navigate to entity page with hybrid Spotify + MusicBrainz search
-  async function searchAndGoToPage(entity: any, type: "track" | "artist" | "album") {
+  async function searchAndGoToPage(
+    entity: any,
+    type: "track" | "artist" | "album"
+  ) {
     if (!entity) return;
 
     const targetUrl = await getHybridNavigationUrl(entity, type);
+    closeSearching();
+    router.push(targetUrl);
+  }
+
+  function goToResults() {
+    let searchTypes = [];
+    if (allSearch) {
+      searchTypes = ["artist", "track", "album"];
+    } else {
+      if (artistSearch) searchTypes.push("artist");
+      if (songSearch) searchTypes.push("track");
+      if (albumSearch) searchTypes.push("album");
+    }
+    const targetUrl =
+      "/results?searchInput=" + searchInput + "&types=" + searchTypes.join(",");
     closeSearching();
     router.push(targetUrl);
   }
@@ -120,23 +148,47 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             className="bg-black text-white text-lg! px-4 py-3"
             onChange={(e) => {
               setSearch(e.target.value);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.target.value.length % 2 === 0) {
                 search();
               }
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                goToResults();
+              }
+            }}
           />
-          <Button
-            type="submit"
-            variant="outline"
-            className="cursor-pointer text-lg px-4 py-3 hover:bg-gray-300 transition"
-            onClick={() => search()}
+          <button
+            className="cursor-pointer text-lg px-3 py-[4.3px] hover:bg-gray-300 transition bg-white rounded-md"
+            onClick={() => goToResults()}
           >
             Search
-          </Button>
+          </button>
         </div>
         <div className="flex w-full items-start justify-start gap-2">
+          <button
+            onClick={() => {
+              if (allSearch === false) {
+                setAllSearch(true);
+                setArtistSearch(false);
+                setSongSearch(false);
+                setAlbumSearch(false);
+              } else {
+                setAllSearch(false);
+              }
+            }}
+            className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
+              allSearch && "bg-white text-black!"
+            }`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                search();
+              }
+            }}
+          >
+            All
+          </button>
           <button
             onClick={() => setSongSearch(!songSearch)}
             className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
@@ -145,7 +197,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                search();
+                goToResults();
               }
             }}
           >
@@ -159,7 +211,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                search();
+                goToResults();
               }
             }}
           >
@@ -173,26 +225,32 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                search();
+                goToResults();
               }
             }}
           >
             Album
           </button>
         </div>
-        <div className="flex flex-col items-start justify-start gap-2 w-full overflow-x-scroll">
+        <div
+          className="flex flex-col items-start justify-start gap-2 w-full overflow-y-auto"
+          style={{
+            scrollbarColor: "gray black",
+            scrollbarWidth: "thin",
+          }}
+        >
           {artistSearchResults.map((artist: any) => (
             <button
-              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
+              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer hover:bg-black/80 transition"
               key={artist.id}
               onClick={() => searchAndGoToPage(artist, "artist")}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-full overflow-hidden">
                 {artist.images && artist.images[0] && (
-                    <img
+                  <img
                     className="object-cover aspect-square rounded-[1px]"
                     src={artist.images[0].url}
-                    />
+                  />
                 )}
               </div>
               <div className="flex items-center justify-start gap-2 text-left">
@@ -204,16 +262,16 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
 
           {songSearchResults.map((song: any) => (
             <button
-              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
+              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer hover:bg-black/80 transition"
               key={song.id}
               onClick={() => searchAndGoToPage(song, "track")}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
                 {song.album.images && song.album.images[0] && (
-                    <img
+                  <img
                     className="object-cover aspect-square rounded-[1px]"
                     src={song.album.images[0].url}
-                    />
+                  />
                 )}
               </div>
               <div className="flex items-center justify-start gap-2 text-left">
@@ -225,16 +283,16 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
 
           {albumSearchResults.map((album: any) => (
             <button
-              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer"
+              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer hover:bg-black/80 transition"
               key={album.id}
               onClick={() => searchAndGoToPage(album, "album")}
             >
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
                 {album.images && album.images[0] && (
-                    <img
+                  <img
                     className="object-cover aspect-square rounded-[1px]"
                     src={album.images[0].url}
-                    />
+                  />
                 )}
               </div>
               <div className="flex items-center justify-start gap-2 text-left">

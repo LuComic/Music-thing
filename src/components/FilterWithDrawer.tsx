@@ -2,7 +2,6 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -19,7 +18,7 @@ const FilterWithDrawer = () => {
         <SlidersHorizontal color="currentColor" className="hidden md:inline" />
         Filter
       </DrawerTrigger>
-      <DrawerContent className="bg-black border-slate-600 text-white !text-base md:!text-lg">
+      <DrawerContent className="bg-black border-slate-600 text-white text-base! md:text-lg!">
         <div className="mx-auto w-full md:max-w-md px-4">
           <DrawerHeader>
             <DrawerTitle className="text-white">Filter Your Music</DrawerTitle>
@@ -30,7 +29,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="rock"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="rock"
@@ -42,7 +41,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="indie"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="indie"
@@ -54,7 +53,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="pop"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="pop"
@@ -66,7 +65,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="hiphop"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="hiphop"
@@ -78,7 +77,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="jazz"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="jazz"
@@ -90,7 +89,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="electronic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="electronic"
@@ -102,7 +101,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="country"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="country"
@@ -114,7 +113,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="rnb"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="rnb"
@@ -126,7 +125,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="metal"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="metal"
@@ -138,7 +137,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="classical"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="classical"
@@ -150,7 +149,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="folk"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="folk"
@@ -162,7 +161,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="blues"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="blues"
@@ -174,7 +173,7 @@ const FilterWithDrawer = () => {
               <div className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   id="soul"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
                 <Label
                   htmlFor="soul"
@@ -195,7 +194,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="energetic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -207,7 +206,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="chill"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -219,7 +218,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="happy"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -231,7 +230,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="melancholic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -243,7 +242,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="romantic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -255,7 +254,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="aggressive"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -267,7 +266,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="relaxing"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -279,7 +278,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="uplifting"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -291,7 +290,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="dark"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -303,7 +302,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="nostalgic"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -315,7 +314,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="dreamy"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -327,7 +326,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="intense"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-3 text-right ml-auto cursor-pointer">
@@ -339,7 +338,7 @@ const FilterWithDrawer = () => {
                 </Label>
                 <Checkbox
                   id="peaceful"
-                  className="data-[state=checked]:bg-violet-800 data-[state=checked]:border-violet-800 cursor-pointer"
+                  className="data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954] cursor-pointer"
                 />
               </div>
             </div>

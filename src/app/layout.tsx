@@ -28,6 +28,10 @@ export default function RootLayout({
     <html lang="en" className="bg-black" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
+        style={{
+          scrollbarColor: "gray black",
+          scrollbarWidth: "thin",
+        }}
       >
         <SpotifyTokenProvider>
           <Header />

@@ -94,7 +94,11 @@ export default function Page() {
     <div className="bg-black min-h-screen w-screen flex items-start justify-center p-4 text-white">
       <div className="flex flex-col md:grid grid-cols-3 gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-40">
         <div className="flex flex-col gap-6 col-span-1">
-          <Link className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full aspect-square rounded-2xl bg-slate-300 overflow-hidden" target="_blank" href={spotifyRes.external_urls.spotify}>
+          <Link
+            className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full aspect-square rounded-2xl bg-slate-300 overflow-hidden"
+            target="_blank"
+            href={spotifyRes.external_urls.spotify}
+          >
             <img
               className="rounded-none object-cover aspect-square"
               alt={spotifyRes.name}
@@ -102,7 +106,9 @@ export default function Page() {
             />
           </Link>
           <div className="flex flex-col gap-1">
-            <h1 className="text-white text-3xl font-semibold">{spotifyRes.name}</h1>
+            <h1 className="text-white text-3xl font-semibold">
+              {spotifyRes.name}
+            </h1>
             <button
               onClick={() => handleArtistClick(spotifyRes.artists[0])}
               className="text-slate-400 text-xl hover:text-slate-500 transition text-left cursor-pointer"
@@ -110,20 +116,23 @@ export default function Page() {
               {spotifyRes.artists[0].name}
             </button>
           </div>
-          {musicbrainzId && musicbrainzRes && musicbrainzRes.tags && musicbrainzRes.tags.length > 0 && (
-            <div>
-              <div className="flex flex-wrap gap-2">
-                {musicbrainzRes.tags.slice(0, 5).map((tag: any) => (
-                  <span
-                    key={tag.name}
-                    className="bg-[#1DB954]/80 text-white px-2 py-1 rounded-md text-sm"
-                  >
-                    {tag.name}
-                  </span>
-                ))}
+          {musicbrainzId &&
+            musicbrainzRes &&
+            musicbrainzRes.tags &&
+            musicbrainzRes.tags.length > 0 && (
+              <div>
+                <div className="flex flex-wrap gap-2">
+                  {musicbrainzRes.tags.slice(0, 5).map((tag: any) => (
+                    <span
+                      key={tag.name}
+                      className="bg-[#1DB954]/80 text-white px-2 py-1 rounded-md text-sm"
+                    >
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
         <div className="flex-1 flex flex-col gap-6 text-white col-span-2 overflow-y-scroll">
           <dl className="grid gap-4 sm:grid-cols-2">
@@ -163,32 +172,35 @@ export default function Page() {
               </dd>
             </div>
           </dl>
-          {musicbrainzId && musicbrainzRes && musicbrainzRes.releases && musicbrainzRes.releases.length > 0 && (
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="text-xl font-semibold cursor-pointer pt-0 pb-3">
-                  Appears on Releases
-                </AccordionTrigger>
-                <AccordionContent className="text-sm md:text-base bg-slate-400/10 rounded-lg p-1">
-                  {musicbrainzRes.releases
-                    .slice(0, 10)
-                    .map((release: any, index: number) => (
-                      <div
-                        key={`${release.id}-${index}`}
-                        className="p-3 hover:bg-black/40 transition rounded-md w-full text-left cursor-pointer flex items-center justify-start gap-2"
-                      >
-                        <span>{release.title}</span>
-                        {release.date && (
-                          <span className="text-slate-500">
-                            ({release.date})
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          )}
+          {musicbrainzId &&
+            musicbrainzRes &&
+            musicbrainzRes.releases &&
+            musicbrainzRes.releases.length > 0 && (
+              <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="text-xl font-semibold cursor-pointer pt-0 pb-3">
+                    Appears on Releases
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm md:text-base bg-slate-400/10 rounded-lg p-1">
+                    {musicbrainzRes.releases
+                      .slice(0, 10)
+                      .map((release: any, index: number) => (
+                        <div
+                          key={`${release.id}-${index}`}
+                          className="p-3 hover:bg-black/40 transition rounded-md w-full text-left cursor-pointer flex items-center justify-start gap-2"
+                        >
+                          <span>{release.title}</span>
+                          {release.date && (
+                            <span className="text-slate-500">
+                              ({release.date})
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )}
         </div>
       </div>
     </div>

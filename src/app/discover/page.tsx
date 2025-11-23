@@ -65,11 +65,11 @@ export default function Page() {
   }));
 
   return (
-    <div className="bg-black min-h-screen max-w-screen w-screen flex items-center justify-center p-4">
-      <div className="flex flex-col items-start justify-start gap-8 w-full md:w-[80%] md:p-10">
+    <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center p-4">
+      <div className="flex flex-col items-start justify-start gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-20">
         {groupedData.map(({ category, songs }) => (
           <div key={category} className="flex flex-col gap-2 w-full">
-            <h3 className="text-white md:text-xl text-lg font-semibold capitalize">
+            <h3 className="text-white md:text-2xl text-xl font-semibold capitalize">
               {category}
             </h3>
             <Carousel
