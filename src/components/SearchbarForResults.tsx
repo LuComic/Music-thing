@@ -150,7 +150,7 @@ export const SearchbarForResults = ({
           className="bg-black text-white text-lg! px-4 py-3"
           onChange={(e) => {
             setSearch(e.target.value);
-            if (e.target.value.length % 2 === 0) {
+            if (e.target.value.length % 3 === 0) {
               search();
             }
           }}
