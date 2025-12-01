@@ -94,7 +94,11 @@ export default function Page() {
     <div className="bg-black min-h-screen w-screen flex items-start justify-center p-4 text-white">
       <div className="flex flex-col md:grid grid-cols-3 gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-40">
         <div className="flex flex-col gap-6 col-span-1">
-          <Link className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full aspect-square rounded-2xl bg-slate-300 overflow-hidden" target="_blank" href={spotifyRes.external_urls.spotify}>
+          <Link
+            className="hover:outline-2 overflow-hidden duration-125 outline-offset-2 outline-[#1DB954] w-full aspect-square rounded-2xl bg-slate-300"
+            target="_blank"
+            href={spotifyRes.external_urls.spotify}
+          >
             {spotifyRes.images && spotifyRes.images[0] && (
               <img
                 className="rounded-none object-cover aspect-square"
@@ -118,7 +122,6 @@ export default function Page() {
           </div>
           {musicbrainzRes?.tags && musicbrainzRes.tags.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold mb-2">Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {musicbrainzRes.tags.slice(0, 5).map((tag: any) => (
                   <span
