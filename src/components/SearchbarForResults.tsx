@@ -47,6 +47,10 @@ export const SearchbarForResults = ({
     if (artistSearch || songSearch || albumSearch) {
       setAllSearch(false);
     }
+
+    if (!artistSearch && !albumSearch && !songSearch) {
+      setAllSearch(true);
+    }
   }, [artistSearch, songSearch, albumSearch]);
 
   // Search
@@ -177,10 +181,8 @@ export const SearchbarForResults = ({
               setArtistSearch(false);
               setSongSearch(false);
               setAlbumSearch(false);
-              goToResults();
             } else {
               setAllSearch(false);
-              goToResults();
             }
           }}
           className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
@@ -198,7 +200,6 @@ export const SearchbarForResults = ({
         <button
           onClick={() => {
             setSongSearch(!songSearch);
-            goToResults();
           }}
           className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
             songSearch && "bg-white text-black!"
@@ -215,7 +216,6 @@ export const SearchbarForResults = ({
         <button
           onClick={() => {
             setArtistSearch(!artistSearch);
-            goToResults();
           }}
           className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
             artistSearch && "bg-white text-black!"
@@ -232,7 +232,6 @@ export const SearchbarForResults = ({
         <button
           onClick={() => {
             setAlbumSearch(!albumSearch);
-            goToResults();
           }}
           className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
             albumSearch && "bg-white text-black!"

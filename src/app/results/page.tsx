@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useRouter } from "next/navigation";
-import { HeartCrack } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   Pagination,
@@ -91,21 +90,61 @@ export default function Page() {
     setPage(newPage);
   };
 
-  if (!types || !searchInput) {
-    return (
-      <div className="bg-black h-screen w-screen flex items-center justify-center">
-        <div className="flex items-center justify-center text-white gap-2">
-          <HeartCrack color="currentColor" />
-          <p>Emmm, something went wrong</p>
-        </div>
-      </div>
-    );
-  }
-
   const hasResults =
     artistSearchResults.length > 0 ||
     songSearchResults.length > 0 ||
     albumSearchResults.length > 0;
+
+  if (!types || !searchInput || !hasResults) {
+    return (
+      <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center p-4 text-white">
+        <div className="flex flex-col items-start justify-start gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-20 min-h-screen">
+          <div className="flex flex-col gap-4 items-start justify-start w-full animate-pulse">
+            <div className="h-12 w-1/2 bg-slate-600 rounded-md"></div>
+            <h3 className="bg-slate-600 h-12 w-1/6 rounded-md"></h3>
+          </div>
+
+          <div className="sm:grid grid-cols-2 md:grid-cols-3 gap-4 lg:grid-cols-4 flex flex-col items-center justify-center w-full h-full">
+            <div className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer   p-2">
+              <div className="w-full h-auto aspect-square rounded-lg bg-slate-600 overflow-hidden"></div>
+              <div className="flex flex-col items-start justify-start w-full gap-2">
+                <p className="font-semibold truncate w-full h-4 bg-slate-600 rounded-md"></p>
+                <p className="font-semibold truncate w-3/4 rounded-md h-4 bg-slate-600"></p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer   p-2">
+              <div className="w-full h-auto aspect-square rounded-lg bg-slate-600 overflow-hidden"></div>
+              <div className="flex flex-col items-start justify-start w-full gap-2">
+                <p className="font-semibold truncate w-full h-4 bg-slate-600 rounded-md"></p>
+                <p className="font-semibold truncate w-3/4 rounded-md h-4 bg-slate-600"></p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer   p-2">
+              <div className="w-full h-auto aspect-square rounded-lg bg-slate-600 overflow-hidden"></div>
+              <div className="flex flex-col items-start justify-start w-full gap-2">
+                <p className="font-semibold truncate w-full h-4 bg-slate-600 rounded-md"></p>
+                <p className="font-semibold truncate w-3/4 rounded-md h-4 bg-slate-600"></p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer  p-2">
+              <div className="w-full h-auto aspect-square rounded-lg bg-slate-600 overflow-hidden"></div>
+              <div className="flex flex-col items-start justify-start w-full gap-2">
+                <p className="font-semibold truncate w-full h-4 bg-slate-600 rounded-md"></p>
+                <p className="font-semibold truncate w-3/4 rounded-md h-4 bg-slate-600"></p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer  p-2">
+              <div className="w-full h-auto aspect-square rounded-lg bg-slate-600 overflow-hidden"></div>
+              <div className="flex flex-col items-start justify-start w-full gap-2">
+                <p className="font-semibold truncate w-full h-4 bg-slate-600 rounded-md"></p>
+                <p className="font-semibold truncate w-3/4 rounded-md h-4 bg-slate-600"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center p-4 text-white">
@@ -125,7 +164,7 @@ export default function Page() {
           {artistSearchResults.map((artist: any) => (
             <div
               key={artist.id}
-              className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer hover:bg-white/10 transition p-2"
+              className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
               onClick={() => searchAndGoToPage(artist, "artist")}
             >
               <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
@@ -133,7 +172,7 @@ export default function Page() {
                   <img
                     src={artist.images[0].url}
                     alt={artist.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover aspect-square"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-400">
@@ -154,7 +193,7 @@ export default function Page() {
           {songSearchResults.map((song: any) => (
             <div
               key={song.id}
-              className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer hover:bg-white/10 transition p-2"
+              className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
               onClick={() => searchAndGoToPage(song, "track")}
             >
               <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
@@ -162,7 +201,7 @@ export default function Page() {
                   <img
                     src={song.album.images[0].url}
                     alt={song.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover aspect-square"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-400">
@@ -184,7 +223,7 @@ export default function Page() {
           {albumSearchResults.map((album: any) => (
             <div
               key={album.id}
-              className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-full aspect-square cursor-pointer hover:bg-white/10 transition p-2"
+              className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
               onClick={() => searchAndGoToPage(album, "album")}
             >
               <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
@@ -192,7 +231,7 @@ export default function Page() {
                   <img
                     src={album.images[0].url}
                     alt={album.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover aspect-square"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-400">

@@ -116,9 +116,9 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
         className="w-full"
       >
         <CarouselContent>
-          {tracks.map((trackItem: any) => (
+          {tracks.map((trackItem: any, index: number) => (
             <CarouselItem
-              key={trackItem.track.id}
+              key={`${trackItem.track.id}-${index}`}
               className="md:basis-1/2 lg:basis-1/4"
               onClick={() => searchAndGoToPage(trackItem.track, "track")}
             >
