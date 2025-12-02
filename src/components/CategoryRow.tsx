@@ -9,6 +9,7 @@ import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useEffect, useState } from "react";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
 
 interface CategoryRowProps {
   title: string;
@@ -122,7 +123,11 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
               className="md:basis-1/2 lg:basis-1/4"
               onClick={() => searchAndGoToPage(trackItem.track, "track")}
             >
-              <div className="flex flex-col items-center justify-center gap-2 cursor-pointer group">
+              <motion.div
+                className="flex flex-col items-center justify-center gap-2 cursor-pointer group"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+              >
                 <div className="aspect-square bg-slate-400 w-full rounded-md overflow-hidden relative">
                   <img
                     className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
@@ -138,7 +143,7 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
                     {trackItem.track.artists?.[0]?.name}
                   </h2>
                 </div>
-              </div>
+              </motion.div>
             </CarouselItem>
           ))}
         </CarouselContent>

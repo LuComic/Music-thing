@@ -3,7 +3,6 @@
 import { CategoryRow } from "@/components/CategoryRow";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Pencil } from "lucide-react";
 import { DiscoverCustomization } from "@/components/DiscoverCustomization";
 
 let CATEGORIES = [

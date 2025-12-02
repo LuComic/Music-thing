@@ -15,6 +15,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { motion } from "motion/react";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -162,10 +163,12 @@ export default function Page() {
         <div className="sm:grid grid-cols-2 md:grid-cols-3 gap-4 lg:grid-cols-4 flex flex-col items-center justify-center w-full h-full">
           {/* Artists */}
           {artistSearchResults.map((artist: any) => (
-            <div
+            <motion.div
               key={artist.id}
               className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
               onClick={() => searchAndGoToPage(artist, "artist")}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
             >
               <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
                 {artist.images && artist.images[0] ? (
@@ -186,15 +189,17 @@ export default function Page() {
                   <p>Artist</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
 
           {/* Songs */}
           {songSearchResults.map((song: any) => (
-            <div
+            <motion.div
               key={song.id}
               className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
               onClick={() => searchAndGoToPage(song, "track")}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
             >
               <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
                 {song.album.images && song.album.images[0] ? (
@@ -216,15 +221,17 @@ export default function Page() {
                   <p>| Song</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
 
           {/* Albums */}
           {albumSearchResults.map((album: any) => (
-            <div
+            <motion.div
               key={album.id}
               className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
               onClick={() => searchAndGoToPage(album, "album")}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
             >
               <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
                 {album.images && album.images[0] ? (
@@ -246,7 +253,7 @@ export default function Page() {
                   <p>| Album</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

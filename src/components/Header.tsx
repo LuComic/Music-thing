@@ -71,7 +71,7 @@ export default function Header() {
             </Link>
           </div>
         ) : (
-          <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/3">
+          <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/3 w-full">
             <Link
               href="#"
               className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center"
@@ -91,7 +91,7 @@ export default function Header() {
               className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center"
             >
               <Sparkles color="currentColor" className="hidden md:inline" />
-              Get started
+              Get Started
             </Link>
           </div>
         )}
