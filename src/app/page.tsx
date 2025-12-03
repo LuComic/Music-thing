@@ -80,7 +80,7 @@ export default function Home() {
         </motion.div>
       </div>
       <div className="w-full h-full flex flex-col md:grid grid-cols-3 items-center justify-center px-8 py-4">
-        <div className="flex  items-start justify-center w-full h-full">
+        <div className="items-start justify-center w-full h-full md:flex hidden">
           <div className="flex flex-col items-start justify-start font-medium sticky top-1/2">
             <span className="text-xl md:text-2xl">Eat,</span>
             <span className="text-xl md:text-2xl">Sleep,</span>
