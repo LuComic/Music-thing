@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { Rocket, ChevronDown } from "lucide-react";
 import { Footer } from "@/components/Footer";
+import { LandingBrowsingButton } from "@/components/smallComps/LandingBrowsingButton";
 
 export default function Home() {
   const router = useRouter();
@@ -63,20 +64,7 @@ export default function Home() {
             <ChevronDown color="currentColor" />
             Find out more
           </motion.button>
-          <motion.button
-            className="md:text-2xl text-lg border border-[#1DB954] rounded-xl px-3 py-2 cursor-pointer flex items-center justify-center gap-3"
-            onClick={() => router.push("/scroll")}
-            whileHover={{
-              opacity: 0.75,
-              transition: {
-                duration: 0.1,
-                ease: "easeIn",
-              },
-            }}
-          >
-            <Rocket color="currentColor" />
-            Start Browsing
-          </motion.button>
+          <LandingBrowsingButton />
         </motion.div>
       </div>
       <div className="w-full h-full flex flex-col md:grid grid-cols-3 items-center justify-center px-8 py-4">
@@ -91,7 +79,7 @@ export default function Home() {
         <div className="flex items-start justify-start w-full h-full flex-col gap-8 col-span-2">
           <div className="flex flex-col gap-4 items-start justify-start">
             <h3 className="text-xl md:text-3xl font-medium">About</h3>
-            <p className="text-base md:text-lg">
+            <p className="text-base md:text-lg text-slate-400">
               This is website is made with the purpose of being a fun and
               educational way of discovering new music. We focus on
               personalisation, customisation and rich information, suitable for
@@ -101,7 +89,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col gap-4 items-start justify-start">
             <h3 className="text-xl md:text-3xl font-medium">The Tech</h3>
-            <span className="text-base md:text-lg">
+            <span className="text-base md:text-lg text-slate-400">
               For the best information, we are using three different APIs:
               <ul style={{ listStyleType: "disc" }} className="ml-8 mt-2">
                 <li>
@@ -124,7 +112,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col gap-4 items-start justify-start">
             <h3 className="text-xl md:text-3xl font-medium">Team</h3>
-            <p className="text-base md:text-lg">
+            <p className="text-base md:text-lg text-slate-400">
               Hi, right now it's just me, Lukas! I'm interested in music myself
               and am learning web dev. This is a cool project I thought of since
               it matches with both my interests.
