@@ -1,4 +1,6 @@
 import { Heart, Volume2, VolumeOff, Bookmark, X, Share } from "lucide-react";
+import styles from "../app/scroll/scroll.module.css";
+import { useState } from "react";
 
 interface SwipeTrackProps {
   track: any;
@@ -23,13 +25,32 @@ export const SwipeTrack = ({
   onVolumeToggle,
   onSaveToggle,
 }: SwipeTrackProps) => {
+  const [animation, setAnimation] = useState<"idle" | "like" | "dislike">(
+    "idle"
+  );
+
+  const handleAction = (type: "like" | "dislike") => {
+    setAnimation(type);
+  };
+
+  const handleAnimationEnd = () => {
+    if (animation === "like") {
+      onLike(track.track.id);
+    } else if (animation === "dislike") {
+      onDislike();
+    }
+  };
+
   return (
     <>
       <button
-        className="flex-col w-full flex items-start justify-start gap-4 cursor-pointer"
+        className={`flex-col w-full flex items-start justify-start gap-4 cursor-pointer ${
+          animation === "like" ? styles.like : ""
+        } ${animation === "dislike" ? styles.dislike : ""}`}
         onClick={() => onNavigate(track.track, "track")}
+        onAnimationEnd={handleAnimationEnd}
       >
-        <div className="w-full rounded-xl overflow-hidden aspect-square bg-slate-300">
+        <div className="w-full rounded-xl overflow-hidden aspect-square bg-transparent">
           <img
             className="object-cover w-full h-full aspect-square rounded-[1px]"
             src={track.track.album.images[0].url}
@@ -37,22 +58,32 @@ export const SwipeTrack = ({
           />
         </div>
         <div className="flex flex-col items-start justify-self-start w-full">
-          <h1 className="text-left text-2xl text-white">{track.track.name}</h1>
+          <h1 className="text-left text-2xl text-white">
+            {track.track.name.length >= 20
+              ? track.track.name.slice(0, 20) + "..."
+              : track.track.name}
+          </h1>
           <h2 className="text-left text-lg text-slate-400">
-            {track.track.artists[0].name}
+            {track.track.artists[0].name.length >= 40
+              ? track.track.artists[0].name.slice(0, 40) + "..."
+              : track.track.artists[0].name}
           </h2>
         </div>
       </button>
       <div className="w-full flex items-start justify-between pt-2">
         <button
           className="flex py-2 justify-center items-center gap-1 text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
-          onClick={onDislike}
+          onClick={() => {
+            handleAction("dislike");
+          }}
         >
           <X fill="#e11d48" color="#e11d48" />
         </button>
         <button
           className="flex py-2 justify-center items-center gap-1 text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
-          onClick={() => onLike(track.track.id)}
+          onClick={() => {
+            handleAction("like");
+          }}
         >
           <Heart fill="#1DB954" color="#1DB954" />
         </button>

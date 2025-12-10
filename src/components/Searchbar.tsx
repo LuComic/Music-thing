@@ -248,7 +248,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
               <div className="aspect-square bg-white h-12 w-auto rounded-full overflow-hidden">
                 {artist.images && artist.images[0] && (
                   <img
-                    className="object-cover aspect-square rounded-[1px]"
+                    className="object-cover h-full w-full"
                     src={artist.images[0].url}
                   />
                 )}
@@ -269,7 +269,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
                 {song.album.images && song.album.images[0] && (
                   <img
-                    className="object-cover aspect-square rounded-[1px]"
+                    className="object-cover h-full w-full"
                     src={song.album.images[0].url}
                   />
                 )}
@@ -290,7 +290,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
               <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
                 {album.images && album.images[0] && (
                   <img
-                    className="object-cover aspect-square rounded-[1px]"
+                    className="object-cover h-full w-full"
                     src={album.images[0].url}
                   />
                 )}

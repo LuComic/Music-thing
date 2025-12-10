@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { SwipeTrack } from "@/components/SwipeTrack";
+import { Spinner } from "@/components/ui/spinner";
 
 // ReccoBeats track interface
 interface ReccoBeatsTrack {
@@ -345,6 +346,7 @@ export default function Home() {
       <div className="w-3/4 sm:w-[35%] md:w-[30%] lg:w-[20%]">
         {currentTrack && (
           <SwipeTrack
+            key={currentTrack.track.id}
             track={currentTrack}
             isLiked={likedTrackStates.has(currentTrack.track.id)}
             volume={volume}
@@ -359,7 +361,7 @@ export default function Home() {
       </div>
       {isLoadingMore && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm">
-          Loading more songs...
+          <Spinner />
         </div>
       )}
     </div>

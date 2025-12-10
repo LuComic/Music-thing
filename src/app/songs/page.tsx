@@ -100,7 +100,7 @@ export default function Page() {
             href={spotifyRes.external_urls.spotify}
           >
             <img
-              className="rounded-none object-cover aspect-square"
+              className="object-cover h-full w-full"
               alt={spotifyRes.name}
               src={spotifyRes.album.images[0].url}
             />

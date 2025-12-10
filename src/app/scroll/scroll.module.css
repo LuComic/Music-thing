@@ -1,0 +1,33 @@
+.like {
+  animation: likeAnimation;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+}
+
+.dislike {
+  animation: dislikeAnimation;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+}
+
+@keyframes likeAnimation {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(8%);
+  }
+}
+
+@keyframes dislikeAnimation {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-8%);
+  }
+}

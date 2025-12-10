@@ -111,10 +111,14 @@ export default function Page() {
     <div className="bg-black min-h-screen w-screen flex items-start justify-center p-4 text-white">
       <div className="flex flex-col md:grid grid-cols-3 gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-40">
         <div className="flex flex-col gap-6 col-span-1">
-          <Link className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full rounded-full bg-slate-300 overflow-hidden" target="_blank" href={spotifyRes.external_urls.spotify}>
+          <Link
+            className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full rounded-full bg-slate-300 overflow-hidden"
+            target="_blank"
+            href={spotifyRes.external_urls.spotify}
+          >
             {spotifyRes.images && spotifyRes.images[0] && (
               <img
-                className="rounded-none! object-cover aspect-square"
+                className="object-cover h-full w-full"
                 alt={spotifyRes.name}
                 src={spotifyRes.images[0].url}
               />
@@ -131,14 +135,16 @@ export default function Page() {
           {musicbrainzRes?.aliases && musicbrainzRes.aliases.length > 0 && (
             <div>
               <div className="flex flex-wrap gap-2">
-                {musicbrainzRes.aliases.slice(0, 6).map((alias: any, index: number) => (
-                  <span
-                    key={`${alias.name}-${index}`}
-                    className="bg-[#1DB954]/80 text-white px-2 py-1 rounded-md text-sm"
-                  >
-                    {alias.name}
-                  </span>
-                ))}
+                {musicbrainzRes.aliases
+                  .slice(0, 6)
+                  .map((alias: any, index: number) => (
+                    <span
+                      key={`${alias.name}-${index}`}
+                      className="bg-[#1DB954]/80 text-white px-2 py-1 rounded-md text-sm"
+                    >
+                      {alias.name}
+                    </span>
+                  ))}
               </div>
             </div>
           )}
@@ -188,7 +194,8 @@ export default function Page() {
                 </dt>
                 <dd className="text-white text-base">
                   {musicbrainzRes["life-span"].begin?.replaceAll("-", ".")} -{" "}
-                  {musicbrainzRes["life-span"].end?.replaceAll("-", ".") || "Present"}
+                  {musicbrainzRes["life-span"].end?.replaceAll("-", ".") ||
+                    "Present"}
                 </dd>
               </div>
             )}

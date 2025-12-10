@@ -101,7 +101,7 @@ export default function Page() {
           >
             {spotifyRes.images && spotifyRes.images[0] && (
               <img
-                className="rounded-none object-cover aspect-square"
+                className="object-cover h-full w-full"
                 alt={spotifyRes.name}
                 src={spotifyRes.images[0].url}
               />
