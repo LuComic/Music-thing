@@ -1,4 +1,12 @@
-import { Heart, Volume2, VolumeOff, Bookmark, X, Share } from "lucide-react";
+import {
+  Heart,
+  Volume2,
+  VolumeOff,
+  Bookmark,
+  X,
+  Share,
+  ChevronLeft,
+} from "lucide-react";
 import styles from "../app/scroll/scroll.module.css";
 import { useState } from "react";
 
@@ -12,6 +20,7 @@ interface SwipeTrackProps {
   onDislike: () => void;
   onVolumeToggle: () => void;
   onSaveToggle: () => void;
+  handlePrevious: () => void;
 }
 
 export const SwipeTrack = ({
@@ -24,6 +33,7 @@ export const SwipeTrack = ({
   onDislike,
   onVolumeToggle,
   onSaveToggle,
+  handlePrevious,
 }: SwipeTrackProps) => {
   const [animation, setAnimation] = useState<"idle" | "like" | "dislike">(
     "idle"
@@ -72,7 +82,13 @@ export const SwipeTrack = ({
       </button>
       <div className="w-full flex items-start justify-between pt-2">
         <button
-          className="flex py-2 justify-center items-center gap-1 text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
+          className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
+          onClick={handlePrevious}
+        >
+          <ChevronLeft color="currentColor" />
+        </button>
+        <button
+          className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
           onClick={() => {
             handleAction("dislike");
           }}
@@ -80,15 +96,15 @@ export const SwipeTrack = ({
           <X fill="#e11d48" color="#e11d48" />
         </button>
         <button
-          className="flex py-2 justify-center items-center gap-1 text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
+          className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
           onClick={() => {
             handleAction("like");
           }}
         >
           <Heart fill="#1DB954" color="#1DB954" />
         </button>
-        <button
-          className="flex py-2 justify-center items-center gap-1 text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
+        {/* <button
+          className="flex py-2 justify-center items-center  text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
           onClick={onVolumeToggle}
         >
           {volume ? (
@@ -96,12 +112,12 @@ export const SwipeTrack = ({
           ) : (
             <VolumeOff color="currentColor" />
           )}
-        </button>
-        <button className="flex py-2 justify-center items-center gap-1 text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition">
+        </button> */}
+        <button className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition">
           <Share color="currentColor" />
         </button>
         <button
-          className="flex py-2 justify-center items-center gap-1 text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
+          className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
           onClick={onSaveToggle}
         >
           {saved ? (

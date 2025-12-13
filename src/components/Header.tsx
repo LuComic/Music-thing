@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {
   Search,
-  Bookmark,
+  Star,
   Compass,
   House,
   BookText,
@@ -39,7 +39,9 @@ export default function Header() {
           <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/3 w-full">
             <Link
               href="/scroll"
-              className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center"
+              className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
+                pathname === "/scroll" && "underline"
+              } underline-offset-4`}
             >
               <House color="currentColor" />
               <span className="hidden md:inline">Home</span>
@@ -56,15 +58,19 @@ export default function Header() {
               </KbdGroup>
             </button>
             <Link
-              href="#"
-              className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center"
+              href="/yours?types=all"
+              className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
+                pathname === "/yours" && "underline"
+              } underline-offset-4`}
             >
-              <Bookmark color="currentColor" />
-              <span className="hidden md:inline">Saved</span>
+              <Star color="currentColor" />
+              <span className="hidden md:inline">Yours</span>
             </Link>
             <Link
               href="/discover"
-              className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center"
+              className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
+                pathname === "/discover" && "underline"
+              } underline-offset-4`}
             >
               <Compass color="currentColor" />
               <span className="hidden md:inline">Discover</span>

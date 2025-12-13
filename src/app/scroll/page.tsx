@@ -323,6 +323,12 @@ export default function Home() {
     }
   };
 
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-black h-screen max-w-screen w-screen flex items-center justify-center p-2">
@@ -356,6 +362,7 @@ export default function Home() {
             onDislike={handleDislike}
             onVolumeToggle={() => setVolume(!volume)}
             onSaveToggle={() => setSaved(!saved)}
+            handlePrevious={handlePrevious}
           />
         )}
       </div>
