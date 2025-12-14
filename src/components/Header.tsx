@@ -9,6 +9,7 @@ import {
   BookText,
   Coffee,
   Sparkles,
+  CircleUserRound,
 } from "lucide-react";
 import { Searchbar } from "./Searchbar";
 import { useState, useEffect } from "react";
@@ -36,7 +37,7 @@ export default function Header() {
       {searching === true && <Searchbar closeSearching={closeSearching} />}
       <div className="w-screen z-20 bg-black/60 flex fixed flex-items-center justify-center bottom-0 md:bottom-auto left-0 md:top-0 backdrop-blur-sm">
         {pathname !== "/" ? (
-          <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/3 w-full">
+          <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/2 w-full">
             <Link
               href="/scroll"
               className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
@@ -54,7 +55,7 @@ export default function Header() {
               <span className="hidden md:inline">Search</span>
               <KbdGroup className="hidden sm:inline">
                 <Kbd className="bg-white/20 text-white">⌘</Kbd>
-                <Kbd className="bg-white/20 text-white">K</Kbd>
+                <Kbd className="bg-white/20 text-white ml-px">K</Kbd>
               </KbdGroup>
             </button>
             <Link
@@ -74,6 +75,15 @@ export default function Header() {
             >
               <Compass color="currentColor" />
               <span className="hidden md:inline">Discover</span>
+            </Link>
+            <Link
+              href="/account"
+              className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
+                pathname === "/discover" && "underline"
+              } underline-offset-4`}
+            >
+              <CircleUserRound color="currentColor" />
+              <span className="hidden md:inline">Account</span>
             </Link>
           </div>
         ) : (

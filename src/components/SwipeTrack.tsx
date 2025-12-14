@@ -21,6 +21,7 @@ interface SwipeTrackProps {
   onVolumeToggle: () => void;
   onSaveToggle: () => void;
   handlePrevious: () => void;
+  currentIndex: number;
 }
 
 export const SwipeTrack = ({
@@ -34,6 +35,7 @@ export const SwipeTrack = ({
   onVolumeToggle,
   onSaveToggle,
   handlePrevious,
+  currentIndex,
 }: SwipeTrackProps) => {
   const [animation, setAnimation] = useState<"idle" | "like" | "dislike">(
     "idle"
@@ -82,7 +84,9 @@ export const SwipeTrack = ({
       </button>
       <div className="w-full flex items-start justify-between pt-2">
         <button
-          className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
+          className={`flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition ${
+            currentIndex === 0 && "opacity-20 hover:none cursor-default!"
+          }`}
           onClick={handlePrevious}
         >
           <ChevronLeft color="currentColor" />

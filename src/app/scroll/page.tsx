@@ -363,6 +363,7 @@ export default function Home() {
             onVolumeToggle={() => setVolume(!volume)}
             onSaveToggle={() => setSaved(!saved)}
             handlePrevious={handlePrevious}
+            currentIndex={currentIndex}
           />
         )}
       </div>
