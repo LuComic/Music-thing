@@ -20,10 +20,10 @@ export default function Layout({
           </p>
         </div>
         <div className="md:grid flex flex-col grid-cols-5 w-full h-full">
-          <div className="w-full h-max md:h-full border-r-none border-r-slate-400 gap-2 border-r-none md:border-r flex flex-row md:flex-col items-start justify-between p-2 md:bg-transparent bg-slate-400/20 md:rounded-none rounded-lg">
+          <div className="w-full h-max md:h-full border-r-none border-r-slate-400 md:gap-2 gap-1 border-r-none md:border-r flex flex-row md:flex-col items-start justify-between p-1 md:p-2 md:bg-transparent bg-slate-400/20 md:rounded-none rounded-lg">
             <AccountInformation />
           </div>
-          <div className="col-span-4 w-full">{children}</div>
+          <div className="col-span-4 w-full px-4 md:pt-0 pt-6">{children}</div>
         </div>
       </div>
     </div>

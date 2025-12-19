@@ -24,7 +24,15 @@ export const AccountInformation = () => {
         }}
         href="/account"
       >
-        <ChartColumn color="currentColor" className="w-full md:w-max" />
+        <ChartColumn
+          color="currentColor"
+          className="w-full md:w-max md:inline hidden"
+        />
+        <ChartColumn
+          color="currentColor"
+          size={18}
+          className="w-full md:w-max md:hidden inline"
+        />
         <span
           className={`md:inline hidden ${
             pathName === "/account" && "underline font-medium"
@@ -44,7 +52,15 @@ export const AccountInformation = () => {
         }}
         href="/account/settings"
       >
-        <Settings color="currentColor" className="w-full md:w-max" />
+        <Settings
+          color="currentColor"
+          className="w-full md:w-max md:inline hidden"
+        />
+        <Settings
+          color="currentColor"
+          className="w-full md:w-max md:hidden inline"
+          size={18}
+        />
         <span
           className={`md:inline hidden ${
             pathName === "/account/settings" && "underline font-medium"
@@ -64,7 +80,15 @@ export const AccountInformation = () => {
         }}
         href="/account/terms"
       >
-        <HeartHandshake color="currentColor" className="w-full md:w-max" />
+        <HeartHandshake
+          color="currentColor"
+          className="w-full md:w-max md:inline hidden"
+        />
+        <HeartHandshake
+          color="currentColor"
+          className="w-full md:w-max inline md:hidden"
+          size={18}
+        />
         <span
           className={`md:inline hidden ${
             pathName === "/account/terms" && "underline font-medium"
@@ -73,8 +97,16 @@ export const AccountInformation = () => {
           Terms
         </span>
       </Link>
-      <button className="flex items-center justify-start cursor-pointer transition gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-rose-400">
-        <LogOut color="currentColor" className="w-full md:w-max" />
+      <button className="flex items-center justify-start cursor-pointer gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-rose-400 hover:text-rose-500 transition">
+        <LogOut
+          color="currentColor"
+          className="w-full md:w-max hidden md:inline"
+        />
+        <LogOut
+          color="currentColor"
+          className="w-full md:w-max inline md:hidden"
+          size={18}
+        />
         <span className="md:inline hidden">Log out</span>
       </button>
     </>
