@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
@@ -42,10 +42,13 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     if (artistSearch || songSearch || albumSearch) {
       setAllSearch(false);
     }
-  }, [artistSearch, songSearch, albumSearch]);
+    if (!artistSearch && !songSearch && !albumSearch) {
+      setAllSearch(true);
+    }
+  }, [artistSearch, songSearch, albumSearch, allSearch]);
 
   // Search
-  async function search() {
+  const search = useCallback(async () => {
     if (!accessToken) return;
 
     let searchParams = {
@@ -102,9 +105,30 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
           }
         });
     }
-  }
+  }, [
+    accessToken,
+    allSearch,
+    artistSearch,
+    songSearch,
+    albumSearch,
+    searchInput,
+  ]);
 
-  // Navigate to entity page with hybrid Spotify + MusicBrainz search
+  // Trigger search when filters change (if there's a search input)
+  useEffect(() => {
+    if (searchInput.length > 0) {
+      search();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allSearch, artistSearch, songSearch, albumSearch]);
+
+  // Trigger search when search input changes (every 3 characters)
+  useEffect(() => {
+    if (searchInput.length > 0 && searchInput.length % 3 === 0) {
+      search();
+    }
+  }, [searchInput, search]);
+
   async function searchAndGoToPage(
     entity: any,
     type: "track" | "artist" | "album"
@@ -190,7 +214,9 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             All
           </button>
           <button
-            onClick={() => setSongSearch(!songSearch)}
+            onClick={() => {
+              setSongSearch(!songSearch);
+            }}
             className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
               songSearch && "bg-white text-black!"
             }`}
@@ -204,7 +230,9 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             Song
           </button>
           <button
-            onClick={() => setArtistSearch(!artistSearch)}
+            onClick={() => {
+              setArtistSearch(!artistSearch);
+            }}
             className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
               artistSearch && "bg-white text-black!"
             }`}
@@ -218,7 +246,9 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             Artist
           </button>
           <button
-            onClick={() => setAlbumSearch(!albumSearch)}
+            onClick={() => {
+              setAlbumSearch(!albumSearch);
+            }}
             className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
               albumSearch && "bg-white text-black!"
             }`}

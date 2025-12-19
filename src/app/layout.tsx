@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Rubik } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { SpotifyTokenProvider } from "@/context/SpotifyTokenContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const rubik = Rubik({
   subsets: ["latin"],
 });
 
@@ -27,15 +21,17 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-black" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
+        className={`${rubik.className} antialiased bg-black`}
         style={{
           scrollbarColor: "gray black",
           scrollbarWidth: "thin",
         }}
       >
         <SpotifyTokenProvider>
-          <Header />
-          {children}
+          <div className="md:pb-0 pb-10">
+            <Header />
+            {children}
+          </div>
         </SpotifyTokenProvider>
       </body>
     </html>

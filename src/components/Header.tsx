@@ -79,7 +79,10 @@ export default function Header() {
             <Link
               href="/account"
               className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
-                pathname === "/discover" && "underline"
+                (pathname === "/account" ||
+                  pathname === "/account/settings" ||
+                  pathname === "/account/terms") &&
+                "underline"
               } underline-offset-4`}
             >
               <CircleUserRound color="currentColor" />

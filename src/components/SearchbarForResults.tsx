@@ -51,7 +51,7 @@ export const SearchbarForResults = ({
     if (!artistSearch && !albumSearch && !songSearch) {
       setAllSearch(true);
     }
-  }, [artistSearch, songSearch, albumSearch]);
+  }, [artistSearch, songSearch, albumSearch, allSearch]);
 
   // Search
   async function search() {
@@ -136,7 +136,11 @@ export const SearchbarForResults = ({
       if (albumSearch) searchTypes.push("album");
     }
     const targetUrl =
-      "/results?searchInput=" + searchInput + "&types=" + searchTypes.join(",");
+      "/results?searchInput=" +
+      searchInput +
+      "&types=" +
+      searchTypes.join(",") +
+      "&page=1";
     setClosedSuggestions(true);
     router.push(targetUrl);
   }

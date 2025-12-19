@@ -2,9 +2,14 @@
 
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { Rocket, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { LandingBrowsingButton } from "@/components/smallComps/LandingBrowsingButton";
+import { Monoton } from "next/font/google";
+
+const notable = Monoton({
+  weight: ["400"],
+});
 
 export default function Home() {
   const router = useRouter();
@@ -12,7 +17,7 @@ export default function Home() {
     <div className="bg-black flex-col h-auto min-h-screen max-w-screen w-screen flex items-center justify-center text-white">
       <div className="w-full h-auto min-h-screen flex flex-col gap-18 items-center justify-center">
         <motion.h1
-          className="md:text-8xl text-left opacity-0 font-medium text-6xl select-none md:block hidden"
+          className={`md:text-8xl text-left opacity-0 font-medium text-6xl select-none md:block hidden ${notable.className}`}
           animate={{ x: 50, opacity: 1 }}
           transition={{
             type: "spring",
@@ -69,7 +74,9 @@ export default function Home() {
       </div>
       <div className="w-full h-full flex flex-col md:grid grid-cols-3 items-center justify-center px-8 py-4">
         <div className="items-start justify-center w-full h-full md:flex hidden">
-          <div className="flex flex-col items-start justify-start font-medium sticky top-1/2">
+          <div
+            className={`flex flex-col items-start justify-start font-medium sticky top-1/2 ${notable.className}`}
+          >
             <span className="text-xl md:text-2xl">Eat,</span>
             <span className="text-xl md:text-2xl">Sleep,</span>
             <span className="text-xl md:text-2xl text-[#1DB954]">Discover</span>

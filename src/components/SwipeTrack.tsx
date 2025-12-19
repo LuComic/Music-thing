@@ -55,12 +55,19 @@ export const SwipeTrack = ({
 
   return (
     <>
+      {/* Animation end class so that the div doesnt flash briefly */}
       <button
         className={`flex-col w-full flex items-start justify-start gap-4 cursor-pointer ${
           animation === "like" ? styles.like : ""
         } ${animation === "dislike" ? styles.dislike : ""}`}
         onClick={() => onNavigate(track.track, "track")}
-        onAnimationEnd={handleAnimationEnd}
+        id="cover_div_with_animations"
+        onAnimationEnd={() => {
+          document
+            .getElementById("cover_div_with_animations")
+            ?.classList.add(styles.animation_end);
+          handleAnimationEnd();
+        }}
       >
         <div className="w-full rounded-xl overflow-hidden aspect-square bg-transparent">
           <img

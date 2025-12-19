@@ -114,7 +114,7 @@ export default function Page() {
             {spotifyRes.artists && spotifyRes.artists[0] && (
               <button
                 onClick={() => handleArtistClick(spotifyRes.artists[0])}
-                className="text-slate-400 text-xl hover:text-slate-500 transition cursor-pointer text-left"
+                className="text-slate-400 text-xl hover:text-slate-500 transition cursor-pointer text-left w-max"
               >
                 {spotifyRes.artists[0].name}
               </button>

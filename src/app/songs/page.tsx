@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { mbApi } from "@/lib/musicbrainz";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
+import { Heart } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -106,12 +107,15 @@ export default function Page() {
             />
           </Link>
           <div className="flex flex-col gap-1">
-            <h1 className="text-white text-3xl font-semibold">
-              {spotifyRes.name}
-            </h1>
+            <div className="text-white text-3xl font-semibold flex items-center justify-start gap-4">
+              <h1>{spotifyRes.name}</h1>
+              <button className="cursor-pointer">
+                <Heart color="#1DB954" />
+              </button>
+            </div>
             <button
               onClick={() => handleArtistClick(spotifyRes.artists[0])}
-              className="text-slate-400 text-xl hover:text-slate-500 transition text-left cursor-pointer"
+              className="text-slate-400 text-xl hover:text-slate-500 transition text-left cursor-pointer w-max"
             >
               {spotifyRes.artists[0].name}
             </button>

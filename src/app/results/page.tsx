@@ -21,6 +21,7 @@ export default function Page() {
   const searchParams = useSearchParams();
   const searchInput = searchParams.get("searchInput");
   const types = searchParams.get("types");
+  const pageNumber = searchParams.get("page");
   const { accessToken } = useSpotifyToken();
   const router = useRouter();
 
@@ -28,9 +29,20 @@ export default function Page() {
   const [songSearchResults, setSongSearchResults] = useState([]);
   const [albumSearchResults, setAlbumSearchResults] = useState([]);
 
-  // Pagination state
   const [page, setPage] = useState(1);
   const LIMIT = 10;
+
+  // Sync page state with URL params
+  useEffect(() => {
+    if (pageNumber) {
+      const parsedPage = parseInt(pageNumber);
+      if (parsedPage !== page) {
+        setPage(parsedPage);
+      }
+    } else {
+      setPage(1);
+    }
+  }, [pageNumber]);
 
   // Reset page when search params change
   useEffect(() => {
@@ -42,7 +54,6 @@ export default function Page() {
     search();
   }, [accessToken, types, searchInput, page]);
 
-  // Search function
   async function search() {
     if (!accessToken || !types || !searchInput) return;
 
@@ -75,7 +86,6 @@ export default function Page() {
     }
   }
 
-  // Navigate to entity page with hybrid Spotify + MusicBrainz search
   async function searchAndGoToPage(
     entity: any,
     type: "track" | "artist" | "album"
@@ -88,7 +98,14 @@ export default function Page() {
 
   const handlePageChange = (newPage: number) => {
     if (newPage < 1) return;
-    setPage(newPage);
+    router.push(
+      "/results?searchInput=" +
+        searchInput +
+        "&types=" +
+        types +
+        "&page=" +
+        newPage
+    );
   };
 
   const hasResults =
@@ -155,7 +172,7 @@ export default function Page() {
             initialSearchInput={searchInput}
             initialTypes={types}
           />
-          <h3 className="text-white md:text-2xl text-xl font-semibold capitalize">
+          <h3 className="text-white md:text-2xl text-xl font-semibold capitalize mt-2">
             Results for '{searchInput}'
           </h3>
         </div>
