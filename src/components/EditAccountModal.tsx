@@ -51,7 +51,7 @@ export const EditAccountModal = () => {
                 <X color="currentColor" />
               </button>
             </div>
-            <div className="flex flex-col items-start justify-start gap-2 w-full">
+            <div className="flex flex-col items-start justify-start gap-2 w-full md:text-lg text-base">
               <span className="font-medium w-max">
                 New username
                 <span className="hidden md:inline text-slate-400 ml-2">
@@ -65,7 +65,7 @@ export const EditAccountModal = () => {
                 className="bg-black text-white px-2 py-1 text-base!"
               />
             </div>
-            <div className="flex flex-col items-start justify-start gap-2 w-full">
+            <div className="flex flex-col items-start justify-start gap-2 w-full md:text-lg text-base">
               <span className="font-medium w-max">
                 New email
                 <span className="hidden md:inline text-slate-400 ml-2">
@@ -79,7 +79,7 @@ export const EditAccountModal = () => {
                 className="bg-black text-white px-2 py-1 text-base!"
               />
             </div>
-            <div className="flex w-full flex-col gap-2 items-center  mt-4">
+            <div className="flex w-full flex-col gap-2 items-center  mt-4 md:text-lg text-base">
               <button className="w-full px-2 py-1 rounded-md border font-medium cursor-pointer hover:text-green-400 hover:border-green-400 text-green-300 border-green-300 transition">
                 Save
               </button>
@@ -94,7 +94,7 @@ export const EditAccountModal = () => {
         </div>
       )}
       <button
-        className="md:text-lg text-base w-max cursor-pointer text-green-300 underline-offset-4 hover:text-white/80 transition mt-4 outline-none"
+        className="md:text-lg text-base w-max cursor-pointer text-white underline-offset-4 hover:text-white/80 transition mt-4 outline-none inline ml-4"
         onClick={openEditModal}
       >
         <Pencil size={18} />

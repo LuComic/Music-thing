@@ -6,9 +6,7 @@ export default function page() {
     <div className="flex flex-col gap-1">
       <h1 className="md:text-2xl text-xl font-semibold mb-4">
         Account Information
-        <button className="inline ml-4">
-          <EditAccountModal />
-        </button>
+        <EditAccountModal />
       </h1>
       <div className="md:text-lg text-base flex gap-2">
         <span className="font-medium">Username: </span>

@@ -51,7 +51,7 @@ export const DeleteAccountModal = () => {
                 <X color="currentColor" />
               </button>
             </div>
-            <div className="flex w-full flex-col gap-2 items-center font-medium">
+            <div className="flex w-full flex-col gap-2 items-center font-medium md:text-lg text-base">
               <button className="w-full px-2 py-1 rounded-md border cursor-pointer text-rose-400 hover:text-rose-500 border-rose-400 hover:border-rose-500 transition">
                 Yup, delete my account
               </button>
@@ -66,7 +66,7 @@ export const DeleteAccountModal = () => {
         </div>
       )}
       <button
-        className="md:text-lg text-base w-max cursor-pointer text-amber-200 underline-offset-4 hover:text-amber-300 transition mt-4 outline-none"
+        className="md:text-lg text-base w-max cursor-pointer text-white underline-offset-4 hover:text-white/80 transition mt-4 outline-none underline"
         onClick={openDeleteModal}
       >
         Manage Account

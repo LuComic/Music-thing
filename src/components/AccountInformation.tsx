@@ -86,7 +86,7 @@ export const AccountInformation = () => {
         />
         <HeartHandshake
           color="currentColor"
-          className="w-full md:w-max inline md:hidden"
+          className="w-full md:w-max md:hidden inline"
           size={18}
         />
         <span

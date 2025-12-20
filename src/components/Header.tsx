@@ -36,7 +36,7 @@ export default function Header() {
     <>
       {searching === true && <Searchbar closeSearching={closeSearching} />}
       <div className="w-screen z-20 bg-black/60 flex fixed flex-items-center justify-center bottom-0 md:bottom-auto left-0 md:top-0 backdrop-blur-sm">
-        {pathname !== "/" ? (
+        {pathname !== "/" && pathname !== "/login" ? (
           <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/2 w-full">
             <Link
               href="/scroll"

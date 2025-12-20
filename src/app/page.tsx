@@ -1,81 +1,21 @@
-"use client";
-
-import { motion } from "motion/react";
-import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { LandingBrowsingButton } from "@/components/smallComps/LandingBrowsingButton";
+import { LandingTitle } from "@/components/LandingTitle";
 import { Monoton } from "next/font/google";
 
-const notable = Monoton({
+const monoton = Monoton({
   weight: ["400"],
 });
 
 export default function Home() {
-  const router = useRouter();
   return (
     <div className="bg-black flex-col h-auto min-h-screen max-w-screen w-screen flex items-center justify-center text-white">
       <div className="w-full h-auto min-h-screen flex flex-col gap-18 items-center justify-center">
-        <motion.h1
-          className={`md:text-8xl text-left opacity-0 font-medium text-6xl select-none md:block hidden ${notable.className}`}
-          animate={{ x: 50, opacity: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 125,
-            opacity: { ease: "easeOut" },
-            damping: 12,
-            duration: 0.8,
-          }}
-        >
-          Eat, Sleep, <br />{" "}
-          <span className="text-[#1DB954]">
-            {" "}
-            Discover <br className="md:hidden block" /> music
-          </span>
-        </motion.h1>
-        <motion.h1
-          className="md:text-8xl text-left opacity-0 font-medium text-6xl select-none md:hidden block"
-          animate={{ opacity: 1 }}
-          transition={{
-            opacity: { ease: "easeIn" },
-            duration: 0.8,
-          }}
-        >
-          Eat, Sleep, <br />{" "}
-          <span className="text-[#1DB954]">
-            {" "}
-            Discover <br className="md:hidden block" /> music
-          </span>
-        </motion.h1>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            duration: 0.5,
-            delay: 0.75,
-          }}
-          className="flex items-center justify-center gap-4 md:flex-row flex-col"
-        >
-          <motion.button
-            className="md:text-2xl text-lg rounded-xl px-3 py-2 cursor-pointer flex items-center justify-center gap-3"
-            whileHover={{
-              opacity: 0.75,
-              transition: {
-                duration: 0.1,
-                ease: "easeIn",
-              },
-            }}
-          >
-            <ChevronDown color="currentColor" />
-            Find out more
-          </motion.button>
-          <LandingBrowsingButton />
-        </motion.div>
+        <LandingTitle />
       </div>
       <div className="w-full h-full flex flex-col md:grid grid-cols-3 items-center justify-center px-8 py-4">
         <div className="items-start justify-center w-full h-full md:flex hidden">
           <div
-            className={`flex flex-col items-start justify-start font-medium sticky top-1/2 ${notable.className}`}
+            className={`flex flex-col items-start justify-start font-medium sticky top-1/2 ${monoton.className}`}
           >
             <span className="text-xl md:text-2xl">Eat,</span>
             <span className="text-xl md:text-2xl">Sleep,</span>
