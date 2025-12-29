@@ -21,6 +21,8 @@ export default function Page() {
   const spotifyId = searchParams.get("spotify_id");
   const musicbrainzId = searchParams.get("musicbrainz_id");
 
+  const [liked, setLiked] = useState(false);
+
   const [spotifyRes, setSpotifyRes] = useState<any>(null);
   const [musicbrainzRes, setMusicbrainzRes] = useState<any>(null);
 
@@ -109,8 +111,15 @@ export default function Page() {
           <div className="flex flex-col gap-1">
             <div className="text-white text-3xl font-semibold flex items-center justify-start gap-4">
               <h1>{spotifyRes.name}</h1>
-              <button className="cursor-pointer">
-                <Heart color="#1DB954" />
+              <button
+                className="cursor-pointer"
+                onClick={() => setLiked(!liked)}
+              >
+                {liked ? (
+                  <Heart color="#1DB954" fill="#1DB954" />
+                ) : (
+                  <Heart color="#1DB954" />
+                )}
               </button>
             </div>
             <button
@@ -191,7 +200,7 @@ export default function Page() {
                       .map((release: any, index: number) => (
                         <div
                           key={`${release.id}-${index}`}
-                          className="p-3 hover:bg-black/40 transition rounded-md w-full text-left cursor-pointer flex items-center justify-start gap-2"
+                          className="p-3 rounded-md w-full text-left cursor-default flex items-center justify-start gap-2"
                         >
                           <span>{release.title}</span>
                           {release.date && (

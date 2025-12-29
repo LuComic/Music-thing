@@ -49,7 +49,9 @@ export default function Header() {
             </Link>
             <button
               onClick={() => setSearching(true)}
-              className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center cursor-pointer outline-none"
+              className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
+                pathname === "/results" && "underline"
+              } underline-offset-4`}
             >
               <Search color="currentColor" />
               <span className="hidden md:inline">Search</span>

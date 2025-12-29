@@ -27,25 +27,16 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     };
   }, [closeSearching]);
 
-  const [allSearch, setAllSearch] = useState(true);
   const [artistSearch, setArtistSearch] = useState(false);
   const [songSearch, setSongSearch] = useState(false);
   const [albumSearch, setAlbumSearch] = useState(false);
+  const allSearch = !artistSearch && !songSearch && !albumSearch;
   const [searchInput, setSearch] = useState("");
   const { accessToken } = useSpotifyToken();
 
   const [artistSearchResults, setArtistSearchResults] = useState([]);
   const [songSearchResults, setSongSearchResults] = useState([]);
   const [albumSearchResults, setAlbumSearchResults] = useState([]);
-
-  useEffect(() => {
-    if (artistSearch || songSearch || albumSearch) {
-      setAllSearch(false);
-    }
-    if (!artistSearch && !songSearch && !albumSearch) {
-      setAllSearch(true);
-    }
-  }, [artistSearch, songSearch, albumSearch, allSearch]);
 
   // Search
   const search = useCallback(async () => {
@@ -114,20 +105,12 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     searchInput,
   ]);
 
-  // Trigger search when filters change (if there's a search input)
-  useEffect(() => {
-    if (searchInput.length > 0) {
-      search();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allSearch, artistSearch, songSearch, albumSearch]);
-
   // Trigger search when search input changes (every 3 characters)
   useEffect(() => {
     if (searchInput.length > 0 && searchInput.length % 3 === 0) {
       search();
     }
-  }, [searchInput, search]);
+  }, [artistSearch, songSearch, albumSearch, searchInput, search]);
 
   async function searchAndGoToPage(
     entity: any,
@@ -150,7 +133,11 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
       if (albumSearch) searchTypes.push("album");
     }
     const targetUrl =
-      "/results?searchInput=" + searchInput + "&types=" + searchTypes.join(",");
+      "/results?searchInput=" +
+      searchInput +
+      "&types=" +
+      searchTypes.join(",") +
+      "&page=1";
     closeSearching();
     router.push(targetUrl);
   }
@@ -192,14 +179,9 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
         <div className="flex w-full items-start justify-start gap-2">
           <button
             onClick={() => {
-              if (allSearch === false) {
-                setAllSearch(true);
-                setArtistSearch(false);
-                setSongSearch(false);
-                setAlbumSearch(false);
-              } else {
-                setAllSearch(false);
-              }
+              setArtistSearch(false);
+              setSongSearch(false);
+              setAlbumSearch(false);
             }}
             className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
               allSearch && "bg-white text-black!"

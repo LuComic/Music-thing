@@ -112,7 +112,7 @@ export default function Page() {
       <div className="flex flex-col md:grid grid-cols-3 gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-40">
         <div className="flex flex-col gap-6 col-span-1">
           <Link
-            className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full rounded-full bg-slate-300 overflow-hidden"
+            className="hover:outline-2 duration-125 outline-offset-2 outline-[#1DB954] w-full rounded-full bg-slate-300 overflow-hidden aspect-square"
             target="_blank"
             href={spotifyRes.external_urls.spotify}
           >
@@ -202,7 +202,7 @@ export default function Page() {
             {musicbrainzRes?.area && (
               <div className="flex flex-col border border-slate-400 rounded-2xl p-4">
                 <dt className="text-slate-400 text-xs uppercase tracking-wide">
-                  Country
+                  Origin
                 </dt>
                 <dd className="text-white text-base">
                   {musicbrainzRes.area.name}

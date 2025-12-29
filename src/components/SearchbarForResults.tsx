@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
@@ -25,10 +25,10 @@ export const SearchbarForResults = ({
     };
   }, []);
 
-  const [allSearch, setAllSearch] = useState(true);
   const [artistSearch, setArtistSearch] = useState(false);
   const [songSearch, setSongSearch] = useState(false);
   const [albumSearch, setAlbumSearch] = useState(false);
+  const allSearch = !artistSearch && !songSearch && !albumSearch;
   const [searchInput, setSearch] = useState(initialSearchInput);
   const { accessToken } = useSpotifyToken();
 
@@ -38,26 +38,26 @@ export const SearchbarForResults = ({
 
   useEffect(() => {
     const initialTypesList = initialTypes.split(",");
-    setSongSearch(initialTypesList.includes("track"));
-    setAlbumSearch(initialTypesList.includes("album"));
-    setArtistSearch(initialTypesList.includes("artist"));
+    const hasTrack = initialTypesList.includes("track");
+    const hasAlbum = initialTypesList.includes("album");
+    const hasArtist = initialTypesList.includes("artist");
+
+    // Check the actual values, not the state
+    // Not having the above in new consts looks at the old value, rendering the 'all' check useless
+    if (hasTrack && hasAlbum && hasArtist) {
+      setSongSearch(false);
+      setArtistSearch(false);
+      setAlbumSearch(false);
+    } else {
+      setSongSearch(hasTrack);
+      setAlbumSearch(hasAlbum);
+      setArtistSearch(hasArtist);
+    }
   }, [initialTypes]);
 
-  useEffect(() => {
-    if (artistSearch || songSearch || albumSearch) {
-      setAllSearch(false);
-    }
-
-    if (!artistSearch && !albumSearch && !songSearch) {
-      setAllSearch(true);
-    }
-  }, [artistSearch, songSearch, albumSearch, allSearch]);
-
   // Search
-  async function search() {
+  const search = useCallback(async () => {
     if (!accessToken) return;
-
-    setClosedSuggestions(false);
 
     let searchParams = {
       method: "GET",
@@ -113,7 +113,14 @@ export const SearchbarForResults = ({
           }
         });
     }
-  }
+  }, [
+    accessToken,
+    allSearch,
+    artistSearch,
+    songSearch,
+    albumSearch,
+    searchInput,
+  ]);
 
   // Navigate to entity page with hybrid Spotify + MusicBrainz search
   async function searchAndGoToPage(
@@ -180,14 +187,9 @@ export const SearchbarForResults = ({
       <div className="flex w-full items-start justify-start gap-2">
         <button
           onClick={() => {
-            if (allSearch === false) {
-              setAllSearch(true);
-              setArtistSearch(false);
-              setSongSearch(false);
-              setAlbumSearch(false);
-            } else {
-              setAllSearch(false);
-            }
+            setArtistSearch(false);
+            setSongSearch(false);
+            setAlbumSearch(false);
           }}
           className={`cursor-pointer text-base text-white rounded-lg border-white border hover:bg-white/80 hover:border-white/0 px-3 py-1 bg-black/40 hover:text-black transition ${
             allSearch && "bg-white text-black!"

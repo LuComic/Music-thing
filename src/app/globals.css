@@ -125,3 +125,11 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+::-moz-selection {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.3);
+}
