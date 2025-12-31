@@ -86,18 +86,28 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     }
   }, [allSearch, artistSearch, songSearch, albumSearch, searchInput]);
 
-  // Trigger search when search input changes (every 3 characters)
+  // Trigger search when filter changes (every 2 characters)
   useEffect(() => {
-    if (searchInput.length >= 3) {
+    if (searchInput.length >= 2) {
       search();
     }
-  }, [artistSearch, songSearch, albumSearch, search]);
+  }, [artistSearch, songSearch, albumSearch]);
 
+  // Debounce effect for the input
   useEffect(() => {
-    if (searchInput.length >= 3 && searchInput.length % 3 === 0) {
-      search();
+    if (!searchInput && searchInput.length === 0) {
+      setAlbumSearchResults([]);
+      setArtistSearchResults([]);
+      setSongSearchResults([]);
+      return;
     }
-  }, [searchInput]);
+
+    const handler = setTimeout(() => {
+      search();
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [searchInput, search]);
 
   async function searchAndGoToPage(
     entity: any,
@@ -121,7 +131,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     }
     const targetUrl =
       "/results?searchInput=" +
-      searchInput +
+      encodeURIComponent(searchInput) +
       "&types=" +
       searchTypes.join(",") +
       "&page=1";
@@ -146,9 +156,6 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
             className="bg-black text-white text-lg! px-4 py-3"
             onChange={(e) => {
               setSearch(e.target.value);
-              if (e.target.value.length % 3 === 0) {
-                search();
-              }
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
