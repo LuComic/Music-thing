@@ -1,10 +1,8 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { mbApi } from "@/lib/musicbrainz";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { Heart } from "lucide-react";
 import {
@@ -13,11 +11,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { accessToken } = useSpotifyToken();
   const spotifyId = searchParams.get("spotify_id");
   const musicbrainzId = searchParams.get("musicbrainz_id");
 
@@ -38,57 +36,34 @@ export default function Page() {
     router.push(url);
   };
 
-  // Fetch Spotify track data
+  // Fetch info for both tracks via backend
   useEffect(() => {
-    if (!accessToken || !spotifyId) return;
-
-    async function getTrack() {
-      const searchParams = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        },
-      };
-
-      const response = await fetch(
-        `https://api.spotify.com/v1/tracks/${spotifyId}`,
-        searchParams
-      );
-      const data = await response.json();
-      console.log("Spotify Track:", data);
-      setSpotifyRes(data);
-    }
-
-    getTrack();
-  }, [accessToken, spotifyId]);
-
-  // Fetch MusicBrainz recording data
-  useEffect(() => {
-    if (!musicbrainzId) return;
-
-    async function getRecording() {
+    const getTracks = async () => {
+      await fetch("/api/spotify-token", { method: "POST" }); // ensure token is set
+      if (!spotifyId || !musicbrainzId) return;
       try {
-        const recording = await mbApi.lookup("recording", musicbrainzId, [
-          "artists",
-          "releases",
-          "tags",
-          "isrcs",
-        ]);
-        console.log("MusicBrainz Recording:", recording);
-        setMusicbrainzRes(recording);
-      } catch (error) {
-        console.error("MusicBrainz fetch error:", error);
-      }
-    }
+        const res = await fetch(
+          "http://localhost:3000/api/get/track?spotify_id=" +
+            spotifyId +
+            "&musicbrainz_id=" +
+            musicbrainzId
+        );
 
-    getRecording();
-  }, [musicbrainzId]);
+        const { spotify, musicbrainz } = await res.json();
+        setSpotifyRes(spotify);
+        setMusicbrainzRes(musicbrainz);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    getTracks();
+  }, [spotifyId, musicbrainzId]);
 
   if (!spotifyRes || (musicbrainzId && !musicbrainzRes)) {
     return (
       <div className="bg-black h-screen w-screen flex items-center justify-center">
-        <p className="text-white">Loading...</p>
+        <Spinner className="text-white size-8" />
       </div>
     );
   }

@@ -1,9 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useEffect, useState } from "react";
-import { mbApi } from "@/lib/musicbrainz";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import Link from "next/link";
 import {
@@ -12,11 +10,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { accessToken } = useSpotifyToken();
   const spotifyId = searchParams.get("spotify_id");
   const musicbrainzId = searchParams.get("musicbrainz_id");
 
@@ -32,65 +30,33 @@ export default function Page() {
 
   // Fetch Spotify artist data
   useEffect(() => {
-    if (!accessToken || !spotifyId) return;
-
-    async function getArtist() {
-      const searchParams = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        },
-      };
-
-      const response = await fetch(
-        `https://api.spotify.com/v1/artists/${spotifyId}`,
-        searchParams
-      );
-      const data = await response.json();
-      console.log("Spotify Artist:", data);
-      setSpotifyRes(data);
-
-      // Fetch artist's albums
-      const albumsResponse = await fetch(
-        `https://api.spotify.com/v1/artists/${spotifyId}/albums?limit=50`,
-        searchParams
-      );
-      const albumsData = await albumsResponse.json();
-      console.log("Spotify Albums:", albumsData);
-      setSpotifyAlbums(albumsData);
-    }
-
-    getArtist();
-  }, [accessToken, spotifyId]);
-
-  // Fetch MusicBrainz artist data
-  useEffect(() => {
-    if (!musicbrainzId) return;
-
-    async function getMusicBrainzArtist() {
+    const getArtists = async () => {
+      await fetch("/api/spotify-token", { method: "POST" }); // ensure token is set
+      if (!spotifyId || !musicbrainzId) return;
       try {
-        const artist = await mbApi.lookup("artist", musicbrainzId, [
-          "recordings",
-          "artist-rels",
-          "url-rels",
-          "tags",
-          "aliases",
-        ]);
-        console.log("MusicBrainz Artist:", artist);
-        setMusicbrainzRes(artist);
-      } catch (error) {
-        console.error("MusicBrainz fetch error:", error);
-      }
-    }
+        const res = await fetch(
+          "http://localhost:3000/api/get/artist?spotify_id=" +
+            spotifyId +
+            "&musicbrainz_id=" +
+            musicbrainzId
+        );
 
-    getMusicBrainzArtist();
-  }, [musicbrainzId]);
+        const { spotify, musicbrainz, albumData } = await res.json();
+        setSpotifyRes(spotify);
+        setMusicbrainzRes(musicbrainz);
+        setSpotifyAlbums(albumData);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    getArtists();
+  }, [spotifyId, musicbrainzId]);
 
   if (!spotifyRes || (musicbrainzId && !musicbrainzRes)) {
     return (
       <div className="bg-black h-screen w-screen flex items-center justify-center">
-        <p className="text-white">Loading...</p>
+        <Spinner className="text-white size-8" />
       </div>
     );
   }
@@ -241,7 +207,7 @@ export default function Page() {
                   {bandMembers.map((member: any) => (
                     <div
                       key={member.artist.id}
-                      className="p-3 hover:bg-black/40 gap-2 transition flex items-start justify-start rounded-md w-full text-left cursor-pointer"
+                      className="p-3 gap-2 flex items-start justify-start rounded-md w-full text-left"
                     >
                       <span>{member.artist.name}</span>
                       {member.attributes && member.attributes.length > 0 && (

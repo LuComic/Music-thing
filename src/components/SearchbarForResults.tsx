@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { useEffect, useState, useCallback } from "react";
-import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
 
@@ -30,7 +29,6 @@ export const SearchbarForResults = ({
   const [albumSearch, setAlbumSearch] = useState(false);
   const allSearch = !artistSearch && !songSearch && !albumSearch;
   const [searchInput, setSearch] = useState(initialSearchInput);
-  const { accessToken } = useSpotifyToken();
 
   const [artistSearchResults, setArtistSearchResults] = useState([]);
   const [songSearchResults, setSongSearchResults] = useState([]);
@@ -57,15 +55,7 @@ export const SearchbarForResults = ({
 
   // Search
   const search = useCallback(async () => {
-    if (!accessToken) return;
-
-    let searchParams = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      },
-    };
+    if (!searchInput) return;
 
     let searchTypes = [];
     if (allSearch) {
@@ -77,50 +67,41 @@ export const SearchbarForResults = ({
     }
 
     if (searchTypes.length > 0) {
-      // The Spotify search
-      await fetch(
-        `https://api.spotify.com/v1/search?q=${searchInput}&type=${searchTypes.join(
-          ","
-        )}`,
-        searchParams
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (
-            (data.artists && data.albums) ||
-            (data.artists && data.tracks) ||
-            (data.albums && data.tracks)
-          ) {
-            setArtistSearchResults(
-              data.artists ? data.artists.items.slice(0, 3) : []
-            );
-            setAlbumSearchResults(
-              data.albums ? data.albums.items.slice(0, 3) : []
-            );
-            setSongSearchResults(
-              data.tracks ? data.tracks.items.slice(0, 3) : []
-            );
-          } else {
-            setArtistSearchResults(
-              data.artists ? data.artists.items.slice(0, 6) : []
-            );
-            setAlbumSearchResults(
-              data.albums ? data.albums.items.slice(0, 6) : []
-            );
-            setSongSearchResults(
-              data.tracks ? data.tracks.items.slice(0, 6) : []
-            );
-          }
-        });
+      await fetch("/api/spotify-token", { method: "POST" });
+      const res = await fetch(
+        `/api/get/search_suggestions?q=${encodeURIComponent(
+          searchInput
+        )}&type=${searchTypes.join(",")}`
+      );
+      const { searchData } = await res.json();
+
+      if (
+        (searchData?.artists && searchData?.albums) ||
+        (searchData?.artists && searchData?.tracks) ||
+        (searchData?.albums && searchData?.tracks)
+      ) {
+        setArtistSearchResults(
+          searchData.artists ? searchData.artists.items.slice(0, 3) : []
+        );
+        setAlbumSearchResults(
+          searchData.albums ? searchData.albums.items.slice(0, 3) : []
+        );
+        setSongSearchResults(
+          searchData.tracks ? searchData.tracks.items.slice(0, 3) : []
+        );
+      } else {
+        setArtistSearchResults(
+          searchData?.artists ? searchData.artists.items.slice(0, 6) : []
+        );
+        setAlbumSearchResults(
+          searchData?.albums ? searchData.albums.items.slice(0, 6) : []
+        );
+        setSongSearchResults(
+          searchData?.tracks ? searchData.tracks.items.slice(0, 6) : []
+        );
+      }
     }
-  }, [
-    accessToken,
-    allSearch,
-    artistSearch,
-    songSearch,
-    albumSearch,
-    searchInput,
-  ]);
+  }, [allSearch, artistSearch, songSearch, albumSearch, searchInput]);
 
   // Navigate to entity page with hybrid Spotify + MusicBrainz search
   async function searchAndGoToPage(

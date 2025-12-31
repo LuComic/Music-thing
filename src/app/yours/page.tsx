@@ -3,7 +3,6 @@
 import { SearchbarForResults } from "@/components/SearchbarForResults";
 import { useSearchParams } from "next/navigation";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
-import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useEffectEvent } from "react";
 import {

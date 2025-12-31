@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function POST() {
   const response = await fetch("https://accounts.spotify.com/api/token", {
@@ -11,5 +11,18 @@ export async function POST() {
     }),
   });
 
-  return NextResponse.json(await response.json());
+  const tokenResponse = await response.json();
+  const cookieStore = await cookies(); // this is MutableCookies here
+
+  cookieStore.set({
+    name: "spotify_access_token",
+    value: tokenResponse.access_token,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 3600,
+    sameSite: "lax",
+  });
+
+  return Response.json({ success: true });
 }

@@ -5,7 +5,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { useEffect, useState } from "react";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
@@ -17,7 +16,6 @@ interface CategoryRowProps {
 }
 
 export function CategoryRow({ title, query }: CategoryRowProps) {
-  const { accessToken } = useSpotifyToken();
   const router = useRouter();
   const [tracks, setTracks] = useState<any[]>([]);
   const [playlistName, setPlaylistName] = useState<string>("");
@@ -25,39 +23,18 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
 
   useEffect(() => {
     async function fetchData() {
-      if (!accessToken) return;
-
-      let searchParams = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        },
-      };
-
       try {
         setLoading(true);
-        // 1. Search for a playlist matching the query
-        const searchResponse = await fetch(
-          `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+        await fetch("/api/spotify-token", { method: "POST" });
+        const res = await fetch(
+          `/api/get/playlist_tracks?q=${encodeURIComponent(
             query
-          )}&type=playlist&limit=10`,
-          searchParams
+          )}&track_limit=50&track_offset=0`
         );
-        const searchData = await searchResponse.json();
-        const playlist = searchData.playlists?.items?.find((p: any) => p);
+        const data = await res.json();
 
-        if (playlist) {
-          setPlaylistName(playlist.name);
-
-          // 2. Fetch tracks from that playlist
-          const tracksResponse = await fetch(
-            playlist.tracks.href,
-            searchParams
-          );
-          const tracksData = await tracksResponse.json();
-          setTracks(tracksData.items || []);
-        }
+        setPlaylistName(data.playlistName ?? "");
+        setTracks(data.tracks ?? []);
       } catch (error) {
         console.error(`Error fetching category ${title}:`, error);
       } finally {
@@ -66,7 +43,7 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
     }
 
     fetchData();
-  }, [accessToken, query, title]);
+  }, [query, title]);
 
   async function searchAndGoToPage(
     entity: any,
@@ -80,7 +57,7 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
   if (loading) {
     return (
       <div className="flex flex-col gap-2 w-full animate-pulse">
-        <div className="h-8 w-48 bg-slate-600 rounded"></div>
+        <div className="h-8 w-48 bg-slate-600 rounded-md"></div>
         <div className="flex -ml-4 overflow-hidden">
           {[1, 2, 3, 4].map((i) => (
             <div
@@ -124,22 +101,22 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
               onClick={() => searchAndGoToPage(trackItem.track, "track")}
             >
               <motion.div
-                className="flex flex-col items-center justify-center gap-2 cursor-pointer group"
+                className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
               >
                 <div className="aspect-square bg-slate-400 w-full rounded-md overflow-hidden relative">
                   <img
-                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                    className="object-cover w-full h-full"
                     alt={`${trackItem.track.name} image`}
                     src={trackItem.track.album.images[0].url}
                   />
                 </div>
                 <div className="flex flex-col items-start justify-start w-full">
-                  <h1 className="text-left text-lg text-white truncate w-full">
+                  <h1 className="text-left font-semibold text-white w-full">
                     {trackItem.track.name}
                   </h1>
-                  <h2 className="text-left text-lg text-slate-400 truncate w-full">
+                  <h2 className="text-left text-sm text-slate-400 w-full">
                     {trackItem.track.artists?.[0]?.name}
                   </h2>
                 </div>

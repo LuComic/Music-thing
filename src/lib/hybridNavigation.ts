@@ -1,5 +1,3 @@
-import { mbApi } from "@/lib/musicbrainz";
-
 /**
  * Hybrid navigation utility that searches MusicBrainz for additional metadata
  * and constructs a URL with both Spotify and MusicBrainz IDs
@@ -28,51 +26,51 @@ export async function getHybridNavigationUrl(
   let musicBrainzId: string | null = null;
   let targetUrl = "";
 
+  const fetchMusicBrainzId = async () => {
+    const base = "/api/get/hybrid_navigation";
+    if (type === "track") {
+      if (!entity.artists || entity.artists.length === 0) return null;
+      const res = await fetch(
+        `${base}?type=track&name=${encodeURIComponent(
+          entity.name
+        )}&artist=${encodeURIComponent(entity.artists[0].name)}`
+      );
+      const data = await res.json();
+      return data.musicbrainzId ?? null;
+    }
+    if (type === "artist") {
+      const res = await fetch(
+        `${base}?type=artist&name=${encodeURIComponent(entity.name)}`
+      );
+      const data = await res.json();
+      return data.musicbrainzId ?? null;
+    }
+    if (type === "album") {
+      if (!entity.artists || entity.artists.length === 0) return null;
+      const res = await fetch(
+        `${base}?type=album&name=${encodeURIComponent(
+          entity.name
+        )}&artist=${encodeURIComponent(entity.artists[0].name)}`
+      );
+      const data = await res.json();
+      return data.musicbrainzId ?? null;
+    }
+    return null;
+  };
+
   try {
     if (type === "track") {
       if (!entity.artists || entity.artists.length === 0) {
         // If no artist info, just use Spotify ID
         return `/songs/${encodeURI(entity.name)}?spotify_id=${entity.id}`;
       }
-      // Build the query with artist, track name
-      const query = `artist:"${entity.artists[0].name}" AND recording:"${entity.name}"`;
-      const musicBrainzResult = await mbApi
-        .search("recording", {
-          query,
-          limit: 5,
-        })
-        .catch((error) => {
-          console.error(`Failed to fetch recording: ${error.message}`);
-        });
 
-      if (
-        musicBrainzResult &&
-        musicBrainzResult.recordings &&
-        musicBrainzResult.recordings[0]
-      ) {
-        musicBrainzId = musicBrainzResult.recordings[0].id;
-      }
+      musicBrainzId = await fetchMusicBrainzId();
       targetUrl = `/songs/${encodeURI(entity.name)}?spotify_id=${entity.id}${
         musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""
       }`;
     } else if (type === "artist") {
-      const query = `artist:"${entity.name}"`;
-      const musicBrainzResult = await mbApi
-        .search("artist", {
-          query,
-          limit: 1,
-        })
-        .catch((error) => {
-          console.error(`Failed to fetch recording: ${error.message}`);
-        });
-
-      if (
-        musicBrainzResult &&
-        musicBrainzResult.artists &&
-        musicBrainzResult.artists[0]
-      ) {
-        musicBrainzId = musicBrainzResult.artists[0].id;
-      }
+      musicBrainzId = await fetchMusicBrainzId();
       targetUrl = `/artists/${encodeURI(entity.name)}?spotify_id=${entity.id}${
         musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""
       }`;
@@ -81,23 +79,8 @@ export async function getHybridNavigationUrl(
         // If no artist info, just use Spotify ID
         return `/albums/${encodeURI(entity.name)}?spotify_id=${entity.id}`;
       }
-      const query = `release:"${entity.name}" AND artist:"${entity.artists[0].name}"`;
-      const musicBrainzResult = await mbApi
-        .search("release", {
-          query,
-          limit: 1,
-        })
-        .catch((error) => {
-          console.error(`Failed to fetch recording: ${error.message}`);
-        });
 
-      if (
-        musicBrainzResult &&
-        musicBrainzResult.releases &&
-        musicBrainzResult.releases[0]
-      ) {
-        musicBrainzId = musicBrainzResult.releases[0].id;
-      }
+      musicBrainzId = await fetchMusicBrainzId();
       targetUrl = `/albums/${encodeURI(entity.name)}?spotify_id=${entity.id}${
         musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""
       }`;

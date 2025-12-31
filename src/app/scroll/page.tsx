@@ -2,30 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { SwipeTrack } from "@/components/SwipeTrack";
 import { Spinner } from "@/components/ui/spinner";
 
-// ReccoBeats track interface
-interface ReccoBeatsTrack {
-  id: string;
-  trackTitle: string;
-  artists: Array<{
-    id: string;
-    name: string;
-    href: string;
-  }>;
-  durationMs: number;
-  href: string;
-  popularity: number;
-}
-
 export default function Home() {
   const [volume, setVolume] = useState(true);
   const [saved, setSaved] = useState(false);
-
-  const { accessToken } = useSpotifyToken();
   const router = useRouter();
   const [tracks, setTracks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,44 +37,24 @@ export default function Home() {
   // Initial fetch
   useEffect(() => {
     async function fetchData() {
-      if (!accessToken) return;
-
-      let searchParams = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        },
-      };
-
       try {
         setLoading(true);
-        const searchResponse = await fetch(
-          `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+        await fetch("/api/spotify-token", { method: "POST" });
+        const res = await fetch(
+          `/api/get/playlist_tracks?q=${encodeURIComponent(
             popularPlaylists.current[0]
-          )}&type=playlist&limit=10`,
-          searchParams
+          )}&playlist_limit=10&track_limit=10&track_offset=0`
         );
-        const searchData = await searchResponse.json();
-        const playlist = searchData.playlists?.items?.find((p: any) => p);
+        const data = await res.json();
+        const initialTracks = (data.tracks ?? []).slice(0, 10);
 
-        if (playlist) {
-          const tracksResponse = await fetch(
-            playlist.tracks.href,
-            searchParams
-          );
-          const tracksData = await tracksResponse.json();
-          const initialTracks = tracksData.items.slice(0, 10) || [];
+        initialTracks.forEach((track: any) => {
+          if (track.track?.id) {
+            displayedTrackIds.current.add(track.track.id);
+          }
+        });
 
-          // Track initial song IDs
-          initialTracks.forEach((track: any) => {
-            if (track.track?.id) {
-              displayedTrackIds.current.add(track.track.id);
-            }
-          });
-
-          setTracks(initialTracks);
-        }
+        setTracks(initialTracks);
       } catch (error) {
         console.error(`Error fetching playlist:`, error);
       } finally {
@@ -100,7 +63,7 @@ export default function Home() {
     }
 
     fetchData();
-  }, [accessToken]);
+  }, []);
 
   // Infinite scroll trigger
   useEffect(() => {
@@ -115,54 +78,9 @@ export default function Home() {
     }
   }, [currentIndex, tracks.length]);
 
-  // Extract Spotify ID from ReccoBeats href
-  const extractSpotifyId = (href: string): string | null => {
-    // ReccoBeats href format: https://open.spotify.com/track/{SPOTIFY_ID}
-    const match = href.match(/track\/([a-zA-Z0-9]+)/);
-    return match ? match[1] : null;
-  };
-
-  // Fetch Spotify track data from Spotify ID
-  const fetchSpotifyTrack = async (spotifyId: string) => {
-    if (!accessToken) return null;
-
-    try {
-      const response = await fetch(
-        `https://api.spotify.com/v1/tracks/${spotifyId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
-
-      if (!response.ok) return null;
-
-      const track = await response.json();
-
-      // Transform to match the format expected by the component
-      return {
-        track: {
-          id: track.id,
-          name: track.name,
-          artists: track.artists,
-          album: track.album,
-          external_urls: track.external_urls,
-          duration_ms: track.duration_ms,
-          popularity: track.popularity,
-        },
-      };
-    } catch (error) {
-      console.error("Error fetching Spotify track:", error);
-      return null;
-    }
-  };
-
   // Fetch more songs based on likes or popular playlists
   const fetchMoreSongs = async () => {
-    if (isLoadingMore || !accessToken) return;
+    if (isLoadingMore) return;
 
     setIsLoadingMore(true);
 
@@ -174,35 +92,17 @@ export default function Home() {
         const seeds = Array.from(likedTracks).slice(0, 5).join(",");
 
         try {
-          const reccoResponse = await fetch(
-            `https://api.reccobeats.com/v1/track/recommendation?seeds=${seeds}&size=10`,
-            {
-              method: "GET",
-              headers: {
-                Accept: "application/json",
-              },
-            }
+          await fetch("/api/spotify-token", { method: "POST" });
+          const exclude = Array.from(displayedTrackIds.current).join(",");
+          const reccoRes = await fetch(
+            `/api/get/reccobeats_recommendations?seeds=${encodeURIComponent(
+              seeds
+            )}&size=10&exclude=${encodeURIComponent(exclude)}`
           );
 
-          if (reccoResponse.ok) {
-            const reccoData = await reccoResponse.json();
-            if (reccoData) console.log("reccobeats data:", reccoData);
-
-            if (reccoData.content && reccoData.content.length > 0) {
-              // Extract Spotify IDs from ReccoBeats results and fetch actual Spotify data
-              const spotifyFetchPromises = reccoData.content
-                .map((track: ReccoBeatsTrack) => {
-                  const spotifyId = extractSpotifyId(track.href);
-                  return spotifyId && !displayedTrackIds.current.has(spotifyId)
-                    ? fetchSpotifyTrack(spotifyId)
-                    : null;
-                })
-                .filter((promise: any) => promise !== null);
-
-              const spotifyTracks = await Promise.all(spotifyFetchPromises);
-              newTracks = spotifyTracks.filter((track) => track !== null);
-              console.log("reccobeats spotify tracks", newTracks);
-            }
+          if (reccoRes.ok) {
+            const reccoData = await reccoRes.json();
+            newTracks = (reccoData.tracks ?? []).filter(Boolean);
           } else {
             // ReccoBeats might not have these tracks indexed, fall through to playlist strategy
             console.log(
@@ -217,49 +117,35 @@ export default function Home() {
 
       // Strategy 2: Fallback to popular playlists if no likes or recommendations failed
       if (newTracks.length === 0) {
-        const searchParams = {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + accessToken,
-          },
-        };
-
         // Rotate through different popular playlists
         currentPlaylistIndex.current =
           (currentPlaylistIndex.current + 1) % popularPlaylists.current.length;
         const playlistQuery =
           popularPlaylists.current[currentPlaylistIndex.current];
 
-        const searchResponse = await fetch(
-          `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+        await fetch("/api/spotify-token", { method: "POST" });
+
+        const probeRes = await fetch(
+          `/api/get/playlist_tracks?q=${encodeURIComponent(
             playlistQuery
-          )}&type=playlist&limit=10`,
-          searchParams
+          )}&playlist_limit=10&track_limit=1&track_offset=0`
         );
-        const searchData = await searchResponse.json();
-        const playlist = searchData.playlists?.items?.find((p: any) => p);
+        const probeData = await probeRes.json();
+        const total = typeof probeData.total === "number" ? probeData.total : 0;
+        const randomOffset = Math.floor(
+          Math.random() * Math.max(0, total - 10)
+        );
 
-        if (playlist) {
-          const tracksResponse = await fetch(
-            playlist.tracks.href,
-            searchParams
-          );
-          const tracksData = await tracksResponse.json();
-
-          // Get random offset to get different songs from the playlist each time
-          const offset = Math.floor(
-            Math.random() * Math.max(0, tracksData.items.length - 10)
-          );
-
-          newTracks = tracksData.items
-            .slice(offset, offset + 10)
-            .filter(
-              (track: any) =>
-                track.track?.id &&
-                !displayedTrackIds.current.has(track.track.id)
-            );
-        }
+        const tracksRes = await fetch(
+          `/api/get/playlist_tracks?q=${encodeURIComponent(
+            playlistQuery
+          )}&playlist_limit=10&track_limit=10&track_offset=${randomOffset}`
+        );
+        const tracksData = await tracksRes.json();
+        newTracks = (tracksData.tracks ?? []).filter(
+          (track: any) =>
+            track.track?.id && !displayedTrackIds.current.has(track.track.id)
+        );
       }
 
       // Add new track IDs to the displayed set

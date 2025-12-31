@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { useEffect, useState, useCallback } from "react";
-import { useSpotifyToken } from "@/context/SpotifyTokenContext";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
 
@@ -32,7 +31,6 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
   const [albumSearch, setAlbumSearch] = useState(false);
   const allSearch = !artistSearch && !songSearch && !albumSearch;
   const [searchInput, setSearch] = useState("");
-  const { accessToken } = useSpotifyToken();
 
   const [artistSearchResults, setArtistSearchResults] = useState([]);
   const [songSearchResults, setSongSearchResults] = useState([]);
@@ -40,15 +38,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
 
   // Search
   const search = useCallback(async () => {
-    if (!accessToken) return;
-
-    let searchParams = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      },
-    };
+    if (!searchInput) return;
 
     let searchTypes = [];
     if (allSearch) {
@@ -60,57 +50,54 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     }
 
     if (searchTypes.length > 0) {
-      // The Spotify search
-      await fetch(
-        `https://api.spotify.com/v1/search?q=${searchInput}&type=${searchTypes.join(
-          ","
-        )}`,
-        searchParams
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (
-            (data.artists && data.albums) ||
-            (data.artists && data.tracks) ||
-            (data.albums && data.tracks)
-          ) {
-            setArtistSearchResults(
-              data.artists ? data.artists.items.slice(0, 3) : []
-            );
-            setAlbumSearchResults(
-              data.albums ? data.albums.items.slice(0, 3) : []
-            );
-            setSongSearchResults(
-              data.tracks ? data.tracks.items.slice(0, 3) : []
-            );
-          } else {
-            setArtistSearchResults(
-              data.artists ? data.artists.items.slice(0, 6) : []
-            );
-            setAlbumSearchResults(
-              data.albums ? data.albums.items.slice(0, 6) : []
-            );
-            setSongSearchResults(
-              data.tracks ? data.tracks.items.slice(0, 6) : []
-            );
-          }
-        });
+      await fetch("/api/spotify-token", { method: "POST" });
+      const res = await fetch(
+        `/api/get/search_suggestions?q=${encodeURIComponent(
+          searchInput
+        )}&type=${searchTypes.join(",")}`
+      );
+      const { searchData } = await res.json();
+
+      if (
+        (searchData?.artists && searchData?.albums) ||
+        (searchData?.artists && searchData?.tracks) ||
+        (searchData?.albums && searchData?.tracks)
+      ) {
+        setArtistSearchResults(
+          searchData.artists ? searchData.artists.items.slice(0, 3) : []
+        );
+        setAlbumSearchResults(
+          searchData.albums ? searchData.albums.items.slice(0, 3) : []
+        );
+        setSongSearchResults(
+          searchData.tracks ? searchData.tracks.items.slice(0, 3) : []
+        );
+      } else {
+        setArtistSearchResults(
+          searchData?.artists ? searchData.artists.items.slice(0, 6) : []
+        );
+        setAlbumSearchResults(
+          searchData?.albums ? searchData.albums.items.slice(0, 6) : []
+        );
+        setSongSearchResults(
+          searchData?.tracks ? searchData.tracks.items.slice(0, 6) : []
+        );
+      }
     }
-  }, [
-    accessToken,
-    allSearch,
-    artistSearch,
-    songSearch,
-    albumSearch,
-    searchInput,
-  ]);
+  }, [allSearch, artistSearch, songSearch, albumSearch, searchInput]);
 
   // Trigger search when search input changes (every 3 characters)
   useEffect(() => {
-    if (searchInput.length > 0 && searchInput.length % 3 === 0) {
+    if (searchInput.length >= 3) {
       search();
     }
-  }, [artistSearch, songSearch, albumSearch, searchInput, search]);
+  }, [artistSearch, songSearch, albumSearch, search]);
+
+  useEffect(() => {
+    if (searchInput.length >= 3 && searchInput.length % 3 === 0) {
+      search();
+    }
+  }, [searchInput]);
 
   async function searchAndGoToPage(
     entity: any,
@@ -149,7 +136,7 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex flex-col gap-4 w-full max-w-xl max-h-[50vh]"
+        className="flex flex-col gap-4 w-full max-w-xl max-h-[50vh] mx-4 sm:mx-0"
       >
         <div className="flex w-full max-w-xl items-center gap-2">
           <Input
