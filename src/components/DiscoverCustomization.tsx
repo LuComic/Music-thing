@@ -62,7 +62,7 @@ export const DiscoverCustomization = () => {
               Customize your discoveries!
             </DrawerTitle>
           </DrawerHeader>
-          <div className="flex flex-col gap-4 items-start justify-start w-full">
+          <div className="flex flex-col gap-4 items-start justify-start w-full cursor-text select-text">
             <div className="flex items-start justify-start gap-2">
               <p className="md:text-lg text-base font-semibold">Title</p>
               <p className="md:text-lg text-base font-normal text-slate-400">
@@ -84,7 +84,7 @@ export const DiscoverCustomization = () => {
                 Field 1
               </AccordionTrigger>
               <AccordionContent>
-                <div className="flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
+                <div className="ml-1 flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
                   <p className="md:text-lg text-base font-medium">Title 1</p>
                   <Input
                     type="text"
@@ -111,7 +111,7 @@ export const DiscoverCustomization = () => {
                 Field 2
               </AccordionTrigger>
               <AccordionContent>
-                <div className="flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
+                <div className="ml-1 flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
                   <p className="md:text-lg text-base font-medium">Title 2</p>
                   <Input
                     type="text"
@@ -138,7 +138,7 @@ export const DiscoverCustomization = () => {
                 Field 3
               </AccordionTrigger>
               <AccordionContent>
-                <div className="flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
+                <div className="ml-1 flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
                   <p className="md:text-lg text-base font-medium">Title 3</p>
                   <Input
                     type="text"
@@ -165,7 +165,7 @@ export const DiscoverCustomization = () => {
                 Field 4
               </AccordionTrigger>
               <AccordionContent>
-                <div className="flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
+                <div className="ml-1 flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
                   <p className="md:text-lg text-base font-medium">Title 4</p>
                   <Input
                     type="text"
@@ -192,7 +192,7 @@ export const DiscoverCustomization = () => {
                 Field 5
               </AccordionTrigger>
               <AccordionContent>
-                <div className="flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
+                <div className="ml-1 flex flex-col gap-2 items-start justify-start w-full md:w-1/2">
                   <p className="md:text-lg text-base font-medium">Title 5</p>
                   <Input
                     type="text"
@@ -217,9 +217,11 @@ export const DiscoverCustomization = () => {
           </Accordion>
 
           <DrawerFooter className="flex items-center justify-center gap-6 flex-row">
-            <DrawerClose className="cursor-pointer">Close</DrawerClose>
+            <DrawerClose className="cursor-pointer text-base text-white rounded-lg hover:text-white/80 px-3 py-1.5 bg-black transition">
+              Close
+            </DrawerClose>
             <button
-              className="cursor-pointer text-lg px-3 py-[4.3px] hover:bg-gray-300 transition bg-white rounded-md text-black"
+              className="cursor-pointer text-base text-black rounded-lg hover:bg-white/80  px-3 py-1.5 bg-white transition"
               onClick={() => saveAndDiscover()}
             >
               Save

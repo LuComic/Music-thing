@@ -1,81 +1,265 @@
-import { Footer } from "@/components/Footer";
-import { LandingTitle } from "@/components/LandingTitle";
-import { Monoton } from "next/font/google";
+"use client";
 
-const monoton = Monoton({
-  weight: ["400"],
-});
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
+import { SwipeTrack } from "@/components/SwipeTrack";
+import { Spinner } from "@/components/ui/spinner";
+import { AccountPopUpModal } from "@/components/AccountPopUpModal";
 
 export default function Home() {
+  const [volume, setVolume] = useState(true);
+  const [saved, setSaved] = useState(false);
+  const router = useRouter();
+  const [tracks, setTracks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Track liked songs with their Spotify IDs
+  const [likedTracks, setLikedTracks] = useState<Set<string>>(new Set());
+  const [likedTrackStates, setLikedTrackStates] = useState<Set<string>>(
+    new Set()
+  );
+
+  // Track displayed song IDs to prevent duplicates
+  const displayedTrackIds = useRef<Set<string>>(new Set());
+
+  // Popular playlists to rotate through for fallback
+  const popularPlaylists = useRef([
+    "top 50 global",
+    "viral 50 global",
+    "today's top hits",
+    "global top 50",
+    "hot hits",
+  ]);
+  const currentPlaylistIndex = useRef(0);
+
+  // Initial fetch
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        await fetch("/api/spotify-token", { method: "POST" });
+        const res = await fetch(
+          `/api/get/playlist_tracks?q=${encodeURIComponent(
+            popularPlaylists.current[0]
+          )}&playlist_limit=10&track_limit=10&track_offset=0`
+        );
+        const data = await res.json();
+        const initialTracks = (data.tracks ?? []).slice(0, 10);
+
+        initialTracks.forEach((track: any) => {
+          if (track.track?.id) {
+            displayedTrackIds.current.add(track.track.id);
+          }
+        });
+
+        setTracks(initialTracks);
+      } catch (error) {
+        console.error(`Error fetching playlist:`, error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  // Infinite scroll trigger
+  useEffect(() => {
+    // Trigger fetch when user is 4 songs away from the end
+    const threshold = 4;
+    if (
+      tracks.length > 0 &&
+      currentIndex >= tracks.length - threshold &&
+      !isLoadingMore
+    ) {
+      fetchMoreSongs();
+    }
+  }, [currentIndex, tracks.length]);
+
+  // Fetch more songs based on likes or popular playlists
+  const fetchMoreSongs = async () => {
+    if (isLoadingMore) return;
+
+    setIsLoadingMore(true);
+
+    try {
+      let newTracks: any[] = [];
+
+      // Strategy 1: If user has liked songs, get ReccoBeats recommendations
+      if (likedTracks.size > 0) {
+        const seeds = Array.from(likedTracks).slice(0, 5).join(",");
+
+        try {
+          await fetch("/api/spotify-token", { method: "POST" });
+          const exclude = Array.from(displayedTrackIds.current).join(",");
+          const reccoRes = await fetch(
+            `/api/get/reccobeats_recommendations?seeds=${encodeURIComponent(
+              seeds
+            )}&size=10&exclude=${encodeURIComponent(exclude)}`
+          );
+
+          if (reccoRes.ok) {
+            const reccoData = await reccoRes.json();
+            newTracks = (reccoData.tracks ?? []).filter(Boolean);
+          } else {
+            // ReccoBeats might not have these tracks indexed, fall through to playlist strategy
+            console.log(
+              "ReccoBeats couldn't find recommendations for these seeds, using playlist fallback"
+            );
+          }
+        } catch (error) {
+          console.log("ReccoBeats error:", error);
+          // Fall through to playlist strategy
+        }
+      }
+
+      // Strategy 2: Fallback to popular playlists if no likes or recommendations failed
+      if (newTracks.length === 0) {
+        // Rotate through different popular playlists
+        currentPlaylistIndex.current =
+          (currentPlaylistIndex.current + 1) % popularPlaylists.current.length;
+        const playlistQuery =
+          popularPlaylists.current[currentPlaylistIndex.current];
+
+        await fetch("/api/spotify-token", { method: "POST" });
+
+        const probeRes = await fetch(
+          `/api/get/playlist_tracks?q=${encodeURIComponent(
+            playlistQuery
+          )}&playlist_limit=10&track_limit=1&track_offset=0`
+        );
+        const probeData = await probeRes.json();
+        const total = typeof probeData.total === "number" ? probeData.total : 0;
+        const randomOffset = Math.floor(
+          Math.random() * Math.max(0, total - 10)
+        );
+
+        const tracksRes = await fetch(
+          `/api/get/playlist_tracks?q=${encodeURIComponent(
+            playlistQuery
+          )}&playlist_limit=10&track_limit=10&track_offset=${randomOffset}`
+        );
+        const tracksData = await tracksRes.json();
+        newTracks = (tracksData.tracks ?? []).filter(
+          (track: any) =>
+            track.track?.id && !displayedTrackIds.current.has(track.track.id)
+        );
+      }
+
+      // Add new track IDs to the displayed set
+      newTracks.forEach((track: any) => {
+        if (track.track?.id) {
+          displayedTrackIds.current.add(track.track.id);
+        }
+      });
+
+      // Append to existing tracks
+      if (newTracks.length > 0) {
+        setTracks((prev) => [...prev, ...newTracks]);
+      }
+    } catch (error) {
+      console.error("Error fetching more songs:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
+  async function searchAndGoToPage(
+    entity: any,
+    type: "track" | "artist" | "album"
+  ) {
+    if (!entity) return;
+    const targetUrl = await getHybridNavigationUrl(entity, type);
+    router.push(targetUrl);
+  }
+
+  const toggleLike = (trackId: string) => {
+    setLikedTrackStates((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(trackId)) {
+        newSet.delete(trackId);
+        // Also remove from liked tracks for recommendations
+        setLikedTracks((prevLiked) => {
+          const newLiked = new Set(prevLiked);
+          newLiked.delete(trackId);
+          return newLiked;
+        });
+      } else {
+        newSet.add(trackId);
+        // Add to liked tracks for recommendations
+        setLikedTracks((prevLiked) => new Set(prevLiked).add(trackId));
+      }
+      return newSet;
+    });
+
+    // Move to next track after liking
+    handleNext();
+  };
+
+  const handleDislike = () => {
+    // Just move to next track without liking
+    handleNext();
+  };
+
+  const handleNext = () => {
+    if (currentIndex < tracks.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-black h-screen max-w-screen w-screen flex items-center justify-center p-2">
+        <div className="w-3/4 sm:w-[35%] md:w-[30%] lg:w-[20%]">
+          <div className="flex-col w-full flex items-start justify-start gap-4 cursor-pointer animate-pulse">
+            <div className="w-full rounded-xl overflow-hidden aspect-square bg-slate-600"></div>
+            <div className="flex flex-col items-start justify-self-start w-full gap-2">
+              <div className="text-left text-2xl bg-slate-600 w-28 h-6 rounded-md"></div>
+              <div className="text-left text-lg bg-slate-600 w-18 h-6 rounded-md"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const currentTrack = tracks[currentIndex];
+
   return (
-    <div className="bg-black flex-col h-auto min-h-screen max-w-screen w-screen flex items-center justify-center text-white">
-      <div className="w-full h-auto min-h-screen flex flex-col gap-18 items-center justify-center">
-        <LandingTitle />
+    <div className="bg-black h-screen max-w-screen w-screen flex items-center justify-center p-2">
+      <div className="w-3/4 sm:w-[35%] md:w-[30%] lg:w-[20%]">
+        {currentTrack && (
+          <SwipeTrack
+            key={currentTrack.track.id}
+            track={currentTrack}
+            isLiked={likedTrackStates.has(currentTrack.track.id)}
+            volume={volume}
+            saved={saved}
+            onNavigate={searchAndGoToPage}
+            onLike={toggleLike}
+            onDislike={handleDislike}
+            onVolumeToggle={() => setVolume(!volume)}
+            onSaveToggle={() => setSaved(!saved)}
+            handlePrevious={handlePrevious}
+            currentIndex={currentIndex}
+          />
+        )}
       </div>
-      <div className="w-full h-full flex flex-col md:grid grid-cols-3 items-center justify-center px-8 py-4">
-        <div className="items-start justify-center w-full h-full md:flex hidden">
-          <div
-            className={`flex flex-col items-start justify-start font-medium sticky top-1/2 ${monoton.className}`}
-          >
-            <span className="text-xl md:text-2xl">Eat,</span>
-            <span className="text-xl md:text-2xl">Sleep,</span>
-            <span className="text-xl md:text-2xl text-[#1DB954]">Discover</span>
-            <span className="text-xl md:text-2xl text-[#1DB954]">Music</span>
-          </div>
+      {isLoadingMore && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm">
+          <Spinner />
         </div>
-        <div className="flex items-start justify-start w-full h-full flex-col gap-8 col-span-2">
-          <div className="flex flex-col gap-4 items-start justify-start">
-            <h3 className="text-xl md:text-3xl font-medium">About</h3>
-            <p className="text-base md:text-lg text-slate-400">
-              This is website is made with the purpose of being a fun and
-              educational way of discovering new music. We focus on
-              personalisation, customisation and rich information, suitable for
-              passing time, learning and{" "}
-              <span className="inline text-[#1DB954]">discovering</span>.
-            </p>
-          </div>
-          <div className="flex flex-col gap-4 items-start justify-start">
-            <h3 className="text-xl md:text-3xl font-medium">The Tech</h3>
-            <span className="text-base md:text-lg text-slate-400">
-              For the best information, we are using three different APIs:
-              <ul style={{ listStyleType: "disc" }} className="ml-8 mt-2">
-                <li>
-                  <span className="text-[#1DB954]">Spotify API</span> - Getting
-                  the most accurate information for search and overall
-                  information.
-                </li>
-                <li>
-                  <span className="text-[#1DB954]">MusicBrainz API</span> - For
-                  additional, fun, information: external links, tags and aliases
-                  etc.
-                </li>
-                <li>
-                  <span className="text-[#1DB954]">ReccoBeats API</span> -
-                  Getting recommendations based on your likes, saves, searches
-                  and more.
-                </li>
-              </ul>
-            </span>
-          </div>
-          <div className="flex flex-col gap-4 items-start justify-start">
-            <h3 className="text-xl md:text-3xl font-medium">Team</h3>
-            <p className="text-base md:text-lg text-slate-400">
-              Hi, right now it's just me, Lukas! I'm interested in music myself
-              and am learning web dev. This is a cool project I thought of since
-              it matches with both my interests.
-              <a
-                className="inline text-[#1DB954] visited:text-[#1DB954] ml-1"
-                href="https://jaager.vercel.app/"
-                target="_blank"
-              >
-                Here's my portfolio
-              </a>
-              .
-            </p>
-          </div>
-        </div>
-      </div>
-      <Footer />
+      )}
+      <AccountPopUpModal />
     </div>
   );
 }

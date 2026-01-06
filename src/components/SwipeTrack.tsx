@@ -7,7 +7,6 @@ import {
   Share,
   ChevronLeft,
 } from "lucide-react";
-import styles from "../app/scroll/scroll.module.css";
 import { useState } from "react";
 
 interface SwipeTrackProps {
@@ -58,14 +57,14 @@ export const SwipeTrack = ({
       {/* Animation end class so that the div doesnt flash briefly */}
       <button
         className={`flex-col w-full flex items-start justify-start gap-4 cursor-pointer ${
-          animation === "like" ? styles.like : ""
-        } ${animation === "dislike" ? styles.dislike : ""}`}
+          animation === "like" ? "like-for-swipe" : ""
+        } ${animation === "dislike" ? "dislike-for-swipe" : ""}`}
         onClick={() => onNavigate(track.track, "track")}
         id="cover_div_with_animations"
         onAnimationEnd={() => {
           document
             .getElementById("cover_div_with_animations")
-            ?.classList.add(styles.animation_end);
+            ?.classList.add("animation_end");
           handleAnimationEnd();
         }}
       >

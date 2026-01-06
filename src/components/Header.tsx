@@ -36,12 +36,12 @@ export default function Header() {
     <>
       {searching === true && <Searchbar closeSearching={closeSearching} />}
       <header className="w-screen z-20 bg-black/60 flex fixed flex-items-center justify-center bottom-0 md:bottom-auto left-0 md:top-0 backdrop-blur-sm">
-        {pathname !== "/" && pathname !== "/login" ? (
+        {pathname !== "/about" && pathname !== "/login" ? (
           <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/2 w-full">
             <Link
-              href="/scroll"
+              href="/"
               className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
-                pathname === "/scroll" && "underline"
+                pathname === "/" && "underline"
               } underline-offset-4`}
             >
               <House color="currentColor" />
@@ -94,8 +94,10 @@ export default function Header() {
         ) : (
           <div className="p-4 md:py-4 md:px-0 md:w-auto flex items-center md:justify-between justify-around md:min-w-1/3 w-full">
             <Link
-              href="#"
-              className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center"
+              href="/about"
+              className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
+                pathname === "/about" && "underline"
+              } underline-offset-4`}
             >
               <BookText color="currentColor" className="hidden md:inline" />
               About
@@ -108,7 +110,7 @@ export default function Header() {
               Coffee
             </Link>
             <Link
-              href="/scroll"
+              href="/"
               className="text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center"
             >
               <Sparkles color="currentColor" className="hidden md:inline" />

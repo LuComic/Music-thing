@@ -80,7 +80,7 @@ export const EditAccountModal = () => {
               />
             </div>
             <div className="flex w-full flex-col gap-2 items-center  mt-4 md:text-lg text-base">
-              <button className="w-full px-2 py-1 rounded-md border font-medium cursor-pointer hover:text-green-400 hover:border-green-400 text-green-300 border-green-300 transition">
+              <button className="w-full px-2 py-1 rounded-md border font-medium cursor-pointer hover:text-green-400 hover:border-[#1db954dd] text-green-300 border-[#1DB954] transition">
                 Save
               </button>
               <button

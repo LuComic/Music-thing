@@ -8,7 +8,7 @@ export const LandingBrowsingButton = () => {
   return (
     <motion.button
       className="md:text-2xl text-lg border border-[#1DB954] rounded-xl px-3 py-2 cursor-pointer flex items-center justify-center gap-3"
-      onClick={() => router.push("/scroll")}
+      onClick={() => router.push("/")}
       whileHover={{
         opacity: 0.75,
         transition: {
