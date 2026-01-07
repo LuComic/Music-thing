@@ -8,6 +8,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { useState } from "react";
+import { LoadingOnClick } from "./LoadingOnClick";
 
 interface SwipeTrackProps {
   track: any;
@@ -39,6 +40,7 @@ export const SwipeTrack = ({
   const [animation, setAnimation] = useState<"idle" | "like" | "dislike">(
     "idle"
   );
+  const [isLoading, setLoading] = useState(false);
 
   const handleAction = (type: "like" | "dislike") => {
     setAnimation(type);
@@ -54,12 +56,16 @@ export const SwipeTrack = ({
 
   return (
     <>
+      {isLoading && <LoadingOnClick size="big" />}
       {/* Animation end class so that the div doesnt flash briefly */}
       <button
         className={`flex-col w-full flex items-start justify-start gap-4 cursor-pointer ${
           animation === "like" ? "like-for-swipe" : ""
         } ${animation === "dislike" ? "dislike-for-swipe" : ""}`}
-        onClick={() => onNavigate(track.track, "track")}
+        onClick={() => {
+          onNavigate(track.track, "track");
+          setLoading(true);
+        }}
         id="cover_div_with_animations"
         onAnimationEnd={() => {
           document

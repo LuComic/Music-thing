@@ -37,18 +37,17 @@ export default function Page() {
   useEffect(() => {
     const getAlbums = async () => {
       await fetch("/api/spotify-token", { method: "POST" }); // ensure token is set
-      if (!spotifyId || !musicbrainzId) return;
+      if (!spotifyId) return;
       try {
         const res = await fetch(
           "http://localhost:3000/api/get/album?spotify_id=" +
             spotifyId +
-            "&musicbrainz_id=" +
-            musicbrainzId
+            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : "")
         );
 
         const { spotify, musicbrainz } = await res.json();
         setSpotifyRes(spotify);
-        setMusicbrainzRes(musicbrainz);
+        if (musicbrainz !== undefined) setMusicbrainzRes(musicbrainz);
       } catch (err) {
         console.error(err);
       }

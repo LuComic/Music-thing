@@ -28,22 +28,21 @@ export default function Page() {
     router.push(url);
   };
 
-  // Fetch Spotify artist data
+  // Fetch artist data
   useEffect(() => {
     const getArtists = async () => {
       await fetch("/api/spotify-token", { method: "POST" }); // ensure token is set
-      if (!spotifyId || !musicbrainzId) return;
+      if (!spotifyId) return;
       try {
         const res = await fetch(
           "http://localhost:3000/api/get/artist?spotify_id=" +
             spotifyId +
-            "&musicbrainz_id=" +
-            musicbrainzId
+            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : "")
         );
 
         const { spotify, musicbrainz, albumData } = await res.json();
         setSpotifyRes(spotify);
-        setMusicbrainzRes(musicbrainz);
+        if (musicbrainz !== undefined) setMusicbrainzRes(musicbrainz);
         setSpotifyAlbums(albumData);
       } catch (err) {
         console.error(err);

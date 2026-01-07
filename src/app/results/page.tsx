@@ -14,7 +14,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { motion } from "motion/react";
+import { ArtistModalResults } from "@/components/ArtistModalResults";
+import { SongModalResults } from "@/components/SongModalResults";
+import { AlbumModalResults } from "@/components/AlbumModalResults";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -231,97 +233,29 @@ export default function Page() {
           <div className="sm:grid grid-cols-2 md:grid-cols-3 gap-4 lg:grid-cols-4 flex flex-col items-center justify-center w-full h-full">
             {/* Artists */}
             {artistSearchResults.map((artist: any) => (
-              <motion.div
+              <ArtistModalResults
+                artist={artist}
+                searchAndGoToPage={searchAndGoToPage}
                 key={artist.id}
-                className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
-                onClick={() => searchAndGoToPage(artist, "artist")}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-              >
-                <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
-                  {artist.images && artist.images[0] ? (
-                    <img
-                      src={artist.images[0].url}
-                      alt={artist.name}
-                      className="w-full h-full object-cover aspect-square"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col items-start justify-start w-full">
-                  <p className="font-semibold truncate w-full">{artist.name}</p>
-                  <div className="flex items-center justify-start gap-2 text-slate-400 text-sm">
-                    <p>Artist</p>
-                  </div>
-                </div>
-              </motion.div>
+              />
             ))}
 
             {/* Songs */}
             {songSearchResults.map((song: any) => (
-              <motion.div
+              <SongModalResults
+                song={song}
+                searchAndGoToPage={searchAndGoToPage}
                 key={song.id}
-                className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
-                onClick={() => searchAndGoToPage(song, "track")}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-              >
-                <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
-                  {song.album.images && song.album.images[0] ? (
-                    <img
-                      src={song.album.images[0].url}
-                      alt={song.name}
-                      className="w-full h-full object-cover aspect-square"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col items-start justify-start w-full">
-                  <p className="font-semibold truncate w-full">{song.name}</p>
-                  <div className="flex items-center justify-start gap-2 text-slate-400 text-sm">
-                    <p>{song.artists.map((a: any) => a.name).join(", ")}</p>
-                    <p>| Song</p>
-                  </div>
-                </div>
-              </motion.div>
+              />
             ))}
 
             {/* Albums */}
             {albumSearchResults.map((album: any) => (
-              <motion.div
+              <AlbumModalResults
+                album={album}
+                searchAndGoToPage={searchAndGoToPage}
                 key={album.id}
-                className="flex flex-col gap-2 items-start justify-start rounded-lg relative w-full h-auto aspect-square cursor-pointer hover:bg-white/10 transition p-2"
-                onClick={() => searchAndGoToPage(album, "album")}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-              >
-                <div className="w-full h-auto aspect-square rounded-lg bg-slate-800 overflow-hidden">
-                  {album.images && album.images[0] ? (
-                    <img
-                      src={album.images[0].url}
-                      alt={album.name}
-                      className="w-full h-full object-cover aspect-square"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col items-start justify-start w-full">
-                  <p className="font-semibold truncate w-full">{album.name}</p>
-                  <div className="flex items-center justify-start gap-2 text-slate-400 text-sm">
-                    <p>{album.artists.map((a: any) => a.name).join(", ")}</p>
-                    <p>| Album</p>
-                  </div>
-                </div>
-              </motion.div>
+              />
             ))}
           </div>
         )}

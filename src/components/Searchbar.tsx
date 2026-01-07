@@ -2,6 +2,9 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState, useCallback } from "react";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
+import { SearchArtist } from "./SearchArtist";
+import { SearchSong } from "./SearchSong";
+import { SearchAlbum } from "./SearchAlbum";
 
 interface SearchbarProps {
   closeSearching: () => void;
@@ -246,68 +249,27 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
           }}
         >
           {artistSearchResults.map((artist: any) => (
-            <button
-              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer hover:bg-black/80 transition"
+            <SearchArtist
+              artist={artist}
+              searchAndGoToPage={searchAndGoToPage}
               key={artist.id}
-              onClick={() => searchAndGoToPage(artist, "artist")}
-            >
-              <div className="aspect-square bg-white h-12 w-auto rounded-full overflow-hidden">
-                {artist.images && artist.images[0] && (
-                  <img
-                    className="object-cover h-full w-full"
-                    src={artist.images[0].url}
-                  />
-                )}
-              </div>
-              <div className="flex items-center justify-start gap-2 text-left">
-                <p className="text-white">{artist.name}</p>
-                <p className="text-slate-400">| Artist</p>
-              </div>{" "}
-            </button>
+            />
           ))}
 
           {songSearchResults.map((song: any) => (
-            <button
-              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer hover:bg-black/80 transition"
+            <SearchSong
+              song={song}
+              searchAndGoToPage={searchAndGoToPage}
               key={song.id}
-              onClick={() => searchAndGoToPage(song, "track")}
-            >
-              <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
-                {song.album.images && song.album.images[0] && (
-                  <img
-                    className="object-cover h-full w-full"
-                    src={song.album.images[0].url}
-                  />
-                )}
-              </div>
-              <div className="flex items-center justify-start gap-2 text-left">
-                <p className="text-white">{song.name}</p>
-                <p className="text-slate-400">Song | {song.artists[0].name}</p>
-              </div>
-            </button>
+            />
           ))}
 
           {albumSearchResults.map((album: any) => (
-            <button
-              className="bg-black/60 backdrop-blur-md flex items-center justify-start gap-4 w-full rounded-lg p-2 cursor-pointer hover:bg-black/80 transition"
+            <SearchAlbum
+              album={album}
+              searchAndGoToPage={searchAndGoToPage}
               key={album.id}
-              onClick={() => searchAndGoToPage(album, "album")}
-            >
-              <div className="aspect-square bg-white h-12 w-auto rounded-md overflow-hidden">
-                {album.images && album.images[0] && (
-                  <img
-                    className="object-cover h-full w-full"
-                    src={album.images[0].url}
-                  />
-                )}
-              </div>
-              <div className="flex items-center justify-start gap-2 text-left">
-                <p className="text-white">{album.name}</p>
-                <p className="text-slate-400">
-                  Album | {album.artists[0].name}
-                </p>
-              </div>
-            </button>
+            />
           ))}
         </div>
       </div>

@@ -16,9 +16,6 @@ export async function GET(req: Request) {
   if (!spotifyId)
     return Response.json({ error: "No spotifyId" }, { status: 400 });
 
-  if (!musicbrainzId)
-    return Response.json({ error: "No musicbrainzId" }, { status: 400 });
-
   const results: any = {};
 
   const searchParams = {
@@ -34,40 +31,46 @@ export async function GET(req: Request) {
     `https://api.spotify.com/v1/albums/${spotifyId}`,
     searchParams
   ).then(async (res) => {
-    if (!res.ok) throw new Error(`Spotify error: ${res.status}`);
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Spotify album error ${res.status}: ${body}`);
+    }
     return res.json();
   });
 
   // Get info for the Musicbrainz album
-  const musicBrainzPromise = mbApi
-    .lookup("release", musicbrainzId, [
-      "artists",
-      "recordings",
-      "tags",
-      "url-rels",
-    ])
-    .catch((error) => {
-      console.error("MusicBrainz lookup error:", error);
-      return null;
-    });
+  const musicBrainzPromise = musicbrainzId
+    ? mbApi.lookup("release", musicbrainzId, [
+        "artists",
+        "recordings",
+        "tags",
+        "url-rels",
+      ])
+    : Promise.resolve(null);
 
-  const [spotifyData, musicbrainzData] = await Promise.all([
-    spotifyPromise.catch((err) => {
-      console.error("Spotify fetch error:", err);
-      return null;
-    }),
+  const [spotifyData, musicbrainzData] = await Promise.allSettled([
+    spotifyPromise,
     musicBrainzPromise,
   ]);
 
-  if (!spotifyData && !musicbrainzData) {
+  if (spotifyData.status === "fulfilled") {
+    results.spotify = spotifyData.value;
+  } else {
+    console.error("Spotify fetch error:", spotifyData.reason);
     return Response.json(
-      { error: "No data available from Spotify or MusicBrainz" },
+      { error: "No data available Spotify album" },
       { status: 404 }
     );
   }
 
-  results.spotify = spotifyData;
-  results.musicbrainz = musicbrainzData;
+  if (musicbrainzData.status === "fulfilled") {
+    results.musicbrainz = musicbrainzData.value;
+  } else {
+    console.log(
+      "No musicbrainz data for album from backend api",
+      musicbrainzData.reason
+    );
+  }
 
   return Response.json(results);
 }

@@ -16,9 +16,6 @@ export async function GET(req: Request) {
   if (!spotifyId)
     return Response.json({ error: "No spotifyId" }, { status: 400 });
 
-  if (!musicbrainzId)
-    return Response.json({ error: "No musicbrainzId" }, { status: 400 });
-
   const results: any = {};
 
   const searchParams = {
@@ -34,7 +31,10 @@ export async function GET(req: Request) {
     `https://api.spotify.com/v1/artists/${spotifyId}`,
     searchParams
   ).then(async (res) => {
-    if (!res.ok) throw new Error(`Spotify error: ${res.status}`);
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Spotify artist error ${res.status}: ${body}`);
+    }
     return res.json();
   });
 
@@ -43,46 +43,58 @@ export async function GET(req: Request) {
     `https://api.spotify.com/v1/artists/${spotifyId}/albums?limit=50`,
     searchParams
   ).then(async (res) => {
-    if (!res.ok) throw new Error(`Spotify error: ${res.status}`);
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Spotify album error ${res.status}: ${body}`);
+    }
     return res.json();
   });
 
   // Get info for the Musicbrainz artist
-  const musicBrainzPromise = mbApi
-    .lookup("artist", musicbrainzId, [
-      "recordings",
-      "artist-rels",
-      "url-rels",
-      "tags",
-      "aliases",
-    ])
-    .catch((error) => {
-      console.error(error);
-      return null;
-    });
+  const musicBrainzPromise = musicbrainzId
+    ? mbApi.lookup("artist", musicbrainzId, [
+        "recordings",
+        "artist-rels",
+        "url-rels",
+        "tags",
+        "aliases",
+      ])
+    : Promise.resolve(null);
 
-  const [spotifyData, musicbrainzData, albumData] = await Promise.all([
-    spotifyPromise.catch((err) => {
-      console.error("Spotify fetch error:", err);
-      return null;
-    }),
+  const [spotifyData, musicbrainzData, albumData] = await Promise.allSettled([
+    spotifyPromise,
     musicBrainzPromise,
-    spotifyAlbumPromise.catch((err) => {
-      console.error("Spotify albums error:", err);
-      return null;
-    }),
+    spotifyAlbumPromise,
   ]);
 
-  if (!spotifyData && !musicbrainzData && !albumData) {
+  if (spotifyData.status === "fulfilled") {
+    results.spotify = spotifyData.value;
+  } else {
+    console.error("Spotify fetch error:", spotifyData.reason);
     return Response.json(
-      { error: "No data available from Spotify or MusicBrainz" },
+      { error: "No data available Spotify artist" },
       { status: 404 }
     );
   }
 
-  results.spotify = spotifyData;
-  results.musicbrainz = musicbrainzData;
-  results.albumData = albumData;
+  if (albumData.status === "fulfilled") {
+    results.albumData = albumData.value;
+  } else {
+    console.error("Spotify fetch error:", albumData.reason);
+    return Response.json(
+      { error: "No data available for Spotify artist's albums" },
+      { status: 404 }
+    );
+  }
+
+  if (musicbrainzData.status === "fulfilled") {
+    results.musicbrainz = musicbrainzData.value;
+  } else {
+    console.log(
+      "No musicbrainz data for artist from backend api",
+      musicbrainzData.reason
+    );
+  }
 
   return Response.json(results);
 }

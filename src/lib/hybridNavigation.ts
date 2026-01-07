@@ -62,38 +62,45 @@ export async function getHybridNavigationUrl(
     if (type === "track") {
       if (!entity.artists || entity.artists.length === 0) {
         // If no artist info, just use Spotify ID
-        return `/songs/${encodeURI(entity.name)}?spotify_id=${entity.id}`;
+        return `/songs/${encodeURIComponent(entity.name)}?spotify_id=${
+          entity.id
+        }`;
       }
 
       musicBrainzId = await fetchMusicBrainzId();
-      targetUrl = `/songs/${encodeURI(entity.name)}?spotify_id=${entity.id}${
-        musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""
-      }`;
+      targetUrl = `/songs/${encodeURIComponent(entity.name)}?spotify_id=${
+        entity.id
+      }${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
     } else if (type === "artist") {
       musicBrainzId = await fetchMusicBrainzId();
-      targetUrl = `/artists/${encodeURI(entity.name)}?spotify_id=${entity.id}${
-        musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""
-      }`;
+      targetUrl = `/artists/${encodeURIComponent(entity.name)}?spotify_id=${
+        entity.id
+      }${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
     } else if (type === "album") {
       if (!entity.artists || entity.artists.length === 0) {
         // If no artist info, just use Spotify ID
         return `/albums/${encodeURI(entity.name)}?spotify_id=${entity.id}`;
       }
-
       musicBrainzId = await fetchMusicBrainzId();
-      targetUrl = `/albums/${encodeURI(entity.name)}?spotify_id=${entity.id}${
-        musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""
-      }`;
+      targetUrl = `/albums/${encodeURIComponent(entity.name)}?spotify_id=${
+        entity.id
+      }${musicBrainzId ? `&musicbrainz_id=${musicBrainzId}` : ""}`;
     }
   } catch (error) {
     console.error("MusicBrainz search error:", error);
     // Fallback to Spotify-only URL if MusicBrainz search fails
     if (type === "track") {
-      targetUrl = `/songs/${encodeURI(entity.name)}?spotify_id=${entity.id}`;
+      targetUrl = `/songs/${encodeURIComponent(entity.name)}?spotify_id=${
+        entity.id
+      }`;
     } else if (type === "artist") {
-      targetUrl = `/artists/${encodeURI(entity.name)}?spotify_id=${entity.id}`;
+      targetUrl = `/artists/${encodeURIComponent(entity.name)}?spotify_id=${
+        entity.id
+      }`;
     } else if (type === "album") {
-      targetUrl = `/albums/${encodeURI(entity.name)}?spotify_id=${entity.id}`;
+      targetUrl = `/albums/${encodeURIComponent(entity.name)}?spotify_id=${
+        entity.id
+      }`;
     }
   }
 
