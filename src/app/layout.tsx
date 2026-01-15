@@ -3,6 +3,7 @@ import { Rubik } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { SpotifyTokenProvider } from "@/context/SpotifyTokenContext";
+import { ConvexClientProvider } from "@/ConvexClientProvider";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -27,12 +28,14 @@ export default function RootLayout({
           scrollbarWidth: "thin",
         }}
       >
-        <SpotifyTokenProvider>
-          <div className="md:pb-0 pb-10">
-            <Header />
-            {children}
-          </div>
-        </SpotifyTokenProvider>
+        <ConvexClientProvider>
+          <SpotifyTokenProvider>
+            <div className="md:pb-0 pb-10">
+              <Header />
+              {children}
+            </div>
+          </SpotifyTokenProvider>
+        </ConvexClientProvider>
       </body>
     </html>
   );

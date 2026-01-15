@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Pencil, X } from "lucide-react";
-import { Input } from "./ui/input";
+import { useState } from "react";
+import { X } from "lucide-react";
 import Link from "next/link";
 
 export const AccountPopUpModal = () => {
