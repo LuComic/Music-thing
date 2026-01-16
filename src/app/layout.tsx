@@ -3,6 +3,7 @@ import { Rubik } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { SpotifyTokenProvider } from "@/context/SpotifyTokenContext";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { ConvexClientProvider } from "@/ConvexClientProvider";
 
 const rubik = Rubik({
@@ -28,14 +29,16 @@ export default function RootLayout({
           scrollbarWidth: "thin",
         }}
       >
-        <ConvexClientProvider>
-          <SpotifyTokenProvider>
-            <div className="md:pb-0 pb-10">
-              <Header />
-              {children}
-            </div>
-          </SpotifyTokenProvider>
-        </ConvexClientProvider>
+        <ConvexAuthNextjsServerProvider>
+          <ConvexClientProvider>
+            <SpotifyTokenProvider>
+              <div className="md:pb-0 pb-10">
+                <Header />
+                {children}
+              </div>
+            </SpotifyTokenProvider>
+          </ConvexClientProvider>
+        </ConvexAuthNextjsServerProvider>
       </body>
     </html>
   );

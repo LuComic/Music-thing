@@ -2,8 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { api } from "../../convex/_generated/api";
+import { Preloaded, useMutation } from "convex/react";
+import { usePreloadedQuery } from "convex/react";
+import { useRouter } from "next/navigation";
 
-export const DeleteAccountModal = () => {
+export const DeleteAccountModal = ({
+  user,
+}: {
+  user: Preloaded<typeof api.userFunctions.currentUser>;
+}) => {
   const [deleteModal, setDeleteModal] = useState(false);
 
   const openDeleteModal = () => {
@@ -31,11 +39,24 @@ export const DeleteAccountModal = () => {
     };
   }, [deleteModal]);
 
+  // Convex deleting the account
+  const userId = usePreloadedQuery(user)?._id;
+  const router = useRouter();
+
+  const deleteAccount = useMutation(api.userFunctions.deleteUser);
+  const deleteAccountFunc = async () => {
+    if (userId) {
+      await deleteAccount({
+        userId: userId,
+      });
+    }
+  };
+
   return (
     <>
       {deleteModal && (
         <div
-          className="w-screen h-screen fixed top-0 left-0 bg-black/60 flex items-center justify-center"
+          className="w-screen h-screen fixed top-0 left-0 bg-black/60 flex px-2 items-center justify-center"
           onClick={closeDeleteModal}
         >
           <div
@@ -52,7 +73,14 @@ export const DeleteAccountModal = () => {
               </button>
             </div>
             <div className="flex w-full flex-col gap-2 items-center font-medium md:text-lg text-base">
-              <button className="w-full px-2 py-1 rounded-md border cursor-pointer text-rose-400 hover:text-rose-500 border-rose-400 hover:border-rose-500 transition">
+              <button
+                onClick={() => {
+                  deleteAccountFunc();
+                  closeDeleteModal();
+                  router.push("/login");
+                }}
+                className="w-full px-2 py-1 text-center rounded-md border cursor-pointer text-rose-400 hover:text-rose-500 border-rose-400 hover:border-rose-500 transition"
+              >
                 Yup, delete my account
               </button>
               <button

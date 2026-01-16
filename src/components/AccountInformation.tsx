@@ -4,24 +4,21 @@ import { ChartColumn, Settings, HeartHandshake, LogOut } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { Spinner } from "./ui/spinner";
 
 export const AccountInformation = () => {
-  const [overallMode, setOverallMode] = useState(true);
-  const [settingsMode, setSettingsMode] = useState(false);
-  const [termsMode, setTermsMode] = useState(false);
   const pathName = usePathname();
+
+  const { signOut } = useAuthActions();
+  const [spinner, setSpinner] = useState(false);
 
   return (
     <>
       <Link
-        className={`flex items-center underline-offset-4 justify-start cursor-pointer transition gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-white md:bg-none ${
-          overallMode && "bg-black/75"
+        className={`flex items-center underline-offset-4 justify-start cursor-pointer transition gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-white md:bg-none md:h-11 ${
+          pathName === "/account" && "md:bg-inherit bg-black/75"
         }`}
-        onClick={() => {
-          setOverallMode(true);
-          setSettingsMode(false);
-          setTermsMode(false);
-        }}
         href="/account"
       >
         <ChartColumn
@@ -42,14 +39,9 @@ export const AccountInformation = () => {
         </span>
       </Link>
       <Link
-        className={`flex items-center underline-offset-4 justify-start cursor-pointer transition gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-white md:bg-none ${
-          settingsMode && "bg-black/75"
-        }`}
-        onClick={() => {
-          setOverallMode(false);
-          setSettingsMode(true);
-          setTermsMode(false);
-        }}
+        className={`flex items-center underline-offset-4 justify-start cursor-pointer transition gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-white md:bg-none md:h-11 ${
+          pathName === "/account/settings" && "md:bg-inherit bg-black/75"
+        } `}
         href="/account/settings"
       >
         <Settings
@@ -63,21 +55,16 @@ export const AccountInformation = () => {
         />
         <span
           className={`md:inline hidden ${
-            pathName === "/account/settings" && "underline font-medium"
+            pathName === "/account/settings" && "underline font-medium "
           }`}
         >
           Settings
         </span>
       </Link>
       <Link
-        className={`flex items-center underline-offset-4 justify-start cursor-pointer transition gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-white md:bg-none ${
-          termsMode && "bg-black/75"
+        className={`flex items-center underline-offset-4 justify-start cursor-pointer transition gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-white md:bg-none md:h-11 ${
+          pathName === "/account/terms" && "md:bg-inherit bg-black/75"
         }`}
-        onClick={() => {
-          setOverallMode(false);
-          setSettingsMode(false);
-          setTermsMode(true);
-        }}
         href="/account/terms"
       >
         <HeartHandshake
@@ -97,17 +84,29 @@ export const AccountInformation = () => {
           Terms
         </span>
       </Link>
-      <button className="flex items-center justify-start cursor-pointer gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-rose-400 hover:text-rose-500 transition">
-        <LogOut
-          color="currentColor"
-          className="w-full md:w-max hidden md:inline"
-        />
-        <LogOut
-          color="currentColor"
-          className="w-full md:w-max inline md:hidden"
-          size={18}
-        />
-        <span className="md:inline hidden">Log out</span>
+      <button
+        onClick={() => {
+          void signOut();
+          setSpinner(true);
+        }}
+        className="flex items-center justify-start cursor-pointer gap-2 w-full hover:bg-white/10 rounded-md px-3 py-2 text-rose-400 hover:text-rose-500 transition md:h-11"
+      >
+        {spinner ? (
+          <Spinner className="size-6 w-max mx-auto" />
+        ) : (
+          <>
+            <LogOut
+              color="currentColor"
+              className="w-full md:w-max hidden md:inline"
+            />
+            <LogOut
+              color="currentColor"
+              className="w-full md:w-max inline md:hidden"
+              size={18}
+            />
+            <span className="md:inline hidden">Sign out</span>
+          </>
+        )}
       </button>
     </>
   );
