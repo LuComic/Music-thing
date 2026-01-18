@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "./ui/input";
 import {
   Accordion,
@@ -35,55 +35,49 @@ export const DiscoverCustomization = () => {
   const [title5, setTitle5] = useState("");
   const [query5, setQuery5] = useState("");
 
-  const addDiscover = useMutation(api.otherFunctions.customizeDiscover);
+  const updateDiscover = useMutation(api.otherFunctions.updateDiscover);
   const currentUser = useQuery(api.userFunctions.currentUser);
 
+  useEffect(() => {
+    if (currentUser?.discover) {
+      const d = currentUser.discover;
+      if (d[0]) {
+        setTitle1(d[0].title);
+        setQuery1(d[0].query);
+      }
+      if (d[1]) {
+        setTitle2(d[1].title);
+        setQuery2(d[1].query);
+      }
+      if (d[2]) {
+        setTitle3(d[2].title);
+        setQuery3(d[2].query);
+      }
+      if (d[3]) {
+        setTitle4(d[3].title);
+        setQuery4(d[3].query);
+      }
+      if (d[4]) {
+        setTitle5(d[4].title);
+        setQuery5(d[4].query);
+      }
+    }
+  }, [currentUser]);
+
   const saveAndDiscover = async () => {
-    if (title1 && query1 && currentUser) {
-      await addDiscover({
-        userId: currentUser?._id,
-        customization: {
-          title: title1,
-          query: query1,
-        },
-      });
-    }
-    if (title2 && query2 && currentUser) {
-      await addDiscover({
-        userId: currentUser?._id,
-        customization: {
-          title: title2,
-          query: query2,
-        },
-      });
-    }
-    if (title3 && query3 && currentUser) {
-      await addDiscover({
-        userId: currentUser?._id,
-        customization: {
-          title: title3,
-          query: query3,
-        },
-      });
-    }
-    if (title4 && query4 && currentUser) {
-      await addDiscover({
-        userId: currentUser?._id,
-        customization: {
-          title: title4,
-          query: query4,
-        },
-      });
-    }
-    if (title5 && query5 && currentUser) {
-      await addDiscover({
-        userId: currentUser?._id,
-        customization: {
-          title: title5,
-          query: query5,
-        },
-      });
-    }
+    if (!currentUser) return;
+
+    const customizations = [];
+    if (title1 && query1) customizations.push({ title: title1, query: query1 });
+    if (title2 && query2) customizations.push({ title: title2, query: query2 });
+    if (title3 && query3) customizations.push({ title: title3, query: query3 });
+    if (title4 && query4) customizations.push({ title: title4, query: query4 });
+    if (title5 && query5) customizations.push({ title: title5, query: query5 });
+
+    await updateDiscover({
+      userId: currentUser._id,
+      customizations: customizations,
+    });
 
     router.push(`/discover`);
   };
