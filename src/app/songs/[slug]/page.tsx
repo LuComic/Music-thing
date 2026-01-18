@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
-import { Heart } from "lucide-react";
+import { Heart, Bookmark } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -12,14 +12,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Spinner } from "@/components/ui/spinner";
+import { api } from "../../../../convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
 
 export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const spotifyId = searchParams.get("spotify_id");
   const musicbrainzId = searchParams.get("musicbrainz_id");
-
-  const [liked, setLiked] = useState(false);
 
   const [spotifyRes, setSpotifyRes] = useState<any>(null);
   const [musicbrainzRes, setMusicbrainzRes] = useState<any>(null);
@@ -45,7 +45,7 @@ export default function Page() {
         const res = await fetch(
           "http://localhost:3000/api/get/track?spotify_id=" +
             spotifyId +
-            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : "")
+            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : ""),
         );
 
         const { spotify, musicbrainz } = await res.json();
@@ -58,6 +58,47 @@ export default function Page() {
 
     getTracks();
   }, [spotifyId, musicbrainzId]);
+
+  // Liking or disliking the song with convex
+  const currentUser = useQuery(api.userFunctions.currentUser);
+
+  let currentList = [];
+  if (currentUser && currentUser.liked) {
+    currentList = currentUser.liked.map((song) => song.id);
+  }
+
+  const likeOrDislike = useMutation(api.trackFunctions.likeOrUnlikeTrack);
+
+  const likeOrDislikeFunc = async (user: any, song: any) => {
+    let op: "like" | "dislike";
+
+    if (currentList.includes(song.id)) {
+      op = "dislike";
+    } else {
+      op = "like";
+    }
+
+    await likeOrDislike({
+      userId: user,
+      track: song,
+      operation: op,
+    });
+  };
+
+  // Saving or unsaving a song
+  let currentSaved = [];
+  if (currentUser && currentUser.saved) {
+    currentSaved = currentUser.saved.map((song) => song.id);
+  }
+
+  const saveOrUnsave = useMutation(api.trackFunctions.saveOrUnsaveTrack);
+
+  const saveOrUnsaveFunc = async (user: any, song: any) => {
+    await saveOrUnsave({
+      userId: user,
+      track: song,
+    });
+  };
 
   if (!spotifyRes || (musicbrainzId && !musicbrainzRes)) {
     return (
@@ -87,12 +128,22 @@ export default function Page() {
               <h1>{spotifyRes.name}</h1>
               <button
                 className="cursor-pointer"
-                onClick={() => setLiked(!liked)}
+                onClick={() => likeOrDislikeFunc(currentUser?._id, spotifyRes)}
               >
-                {liked ? (
+                {currentList.includes(spotifyRes.id) ? (
                   <Heart color="#1DB954" fill="#1DB954" />
                 ) : (
                   <Heart color="#1DB954" />
+                )}
+              </button>
+              <button
+                className="cursor-pointer"
+                onClick={() => saveOrUnsaveFunc(currentUser?._id, spotifyRes)}
+              >
+                {currentSaved.includes(spotifyRes.id) ? (
+                  <Bookmark color="white" fill="white" />
+                ) : (
+                  <Bookmark color="white" />
                 )}
               </button>
             </div>
@@ -152,7 +203,7 @@ export default function Page() {
               </dt>
               <dd className="text-white text-base">
                 {`${Math.floor(spotifyRes.duration_ms / 60000)}:${Math.floor(
-                  (spotifyRes.duration_ms % 60000) / 1000
+                  (spotifyRes.duration_ms % 60000) / 1000,
                 )
                   .toString()
                   .padStart(2, "0")}`}

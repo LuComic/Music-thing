@@ -118,7 +118,7 @@ export const EditAccountModal = ({
             <div className="flex flex-col items-start justify-start gap-2 w-full md:text-lg text-base">
               <span className="font-medium w-max">
                 New username
-                <span className="hidden md:inline text-slate-400 ml-2">
+                <span className="hidden font-normal md:inline text-slate-400 ml-2">
                   {currentUser?.name}
                 </span>
               </span>
@@ -141,7 +141,7 @@ export const EditAccountModal = ({
             <div className="flex flex-col items-start justify-start gap-2 w-full md:text-lg text-base">
               <span className="font-medium w-max">
                 New email
-                <span className="hidden md:inline text-slate-400 ml-2">
+                <span className="hidden font-normal md:inline text-slate-400 ml-2">
                   {currentUser?.email}
                 </span>
               </span>
@@ -177,7 +177,7 @@ export const EditAccountModal = ({
                 Save
               </button>
               <button
-                className="w-full px-2 py-1 rounded-md underline underline-offset-4 cursor-pointer hover:text-white/80 hover:border-white/80 transition"
+                className="w-full font-normal px-2 py-1 rounded-md underline underline-offset-4 cursor-pointer hover:text-white/80 hover:border-white/80 transition"
                 onClick={closeEditModal}
               >
                 Cancel

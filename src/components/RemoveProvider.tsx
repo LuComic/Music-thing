@@ -30,13 +30,13 @@ export const RemoveProvider: React.FC<RemoveProviderProps> = ({
   return (
     <div className="flex gap-2 items-center justify-start relative">
       <div
-        className={`rounded-md w-full px-2.5 py-1 text-center border ${plat === "google" ? "border-white/80 text-white/80" : "border-[#564274] text-[#564274]"}`}
+        className={`rounded-md w-full px-2.5 py-1 text-white/80 text-center border ${plat === "google" ? "border-white/80 " : "border-[#564274]"}`}
       >
         {plat.charAt(0).toUpperCase() + plat.slice(1)}
       </div>
       {sureToRemove ? (
         <button
-          className="border border-rose-400 hover:border-rose-500  px-2.5 py-1 rounded-md cursor-pointer transition text-rose-400 hover:text-rose-500"
+          className="border border-rose-400 font-normal hover:border-rose-500  px-2.5 py-1 rounded-md cursor-pointer transition text-rose-400 hover:text-rose-500"
           onClick={() => {
             removeProviderFunc();
             closeEditModal();
@@ -46,7 +46,7 @@ export const RemoveProvider: React.FC<RemoveProviderProps> = ({
         </button>
       ) : (
         <button
-          className="border border-slate-400 hover:border-slate-500 px-2.5 py-1 rounded-md cursor-pointer text-slate-400 hover:text-slate-500 transition"
+          className="border border-slate-400 font-normal hover:border-slate-500 px-2.5 py-1 rounded-md cursor-pointer text-slate-400 hover:text-slate-500 transition"
           onClick={() => setSureToRemove(true)}
         >
           Remove

@@ -1,14 +1,10 @@
-import {
-  Heart,
-  Volume2,
-  VolumeOff,
-  Bookmark,
-  X,
-  Share,
-  ChevronLeft,
-} from "lucide-react";
+"use client";
+
+import { Heart, Bookmark, X, Share, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { LoadingOnClick } from "./LoadingOnClick";
+import { api } from "../../convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
 
 interface SwipeTrackProps {
   track: any;
@@ -26,25 +22,18 @@ interface SwipeTrackProps {
 
 export const SwipeTrack = ({
   track,
-  isLiked,
-  volume,
   saved,
   onNavigate,
   onLike,
   onDislike,
-  onVolumeToggle,
   onSaveToggle,
   handlePrevious,
   currentIndex,
 }: SwipeTrackProps) => {
   const [animation, setAnimation] = useState<"idle" | "like" | "dislike">(
-    "idle"
+    "idle",
   );
   const [isLoading, setLoading] = useState(false);
-
-  const handleAction = (type: "like" | "dislike") => {
-    setAnimation(type);
-  };
 
   const handleAnimationEnd = () => {
     if (animation === "like") {
@@ -52,6 +41,33 @@ export const SwipeTrack = ({
     } else if (animation === "dislike") {
       onDislike();
     }
+  };
+
+  // Liking or disliking the song with convex
+  const currentUser = useQuery(api.userFunctions.currentUser);
+  const likeOrDislike = useMutation(api.trackFunctions.likeOrUnlikeTrack);
+
+  const likeOrDislikeFunc = async (
+    user: any,
+    song: any,
+    op: "like" | "dislike",
+  ) => {
+    await likeOrDislike({
+      userId: user,
+      track: song,
+      operation: op,
+    });
+    setAnimation(op);
+  };
+
+  // Saving or unsaving the song with convex
+  const saveOrUnsave = useMutation(api.trackFunctions.saveOrUnsaveTrack);
+
+  const saveOrUnsaveFunc = async (user: any, song: any) => {
+    await saveOrUnsave({
+      userId: user,
+      track: song,
+    });
   };
 
   return (
@@ -106,7 +122,7 @@ export const SwipeTrack = ({
         <button
           className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
           onClick={() => {
-            handleAction("dislike");
+            likeOrDislikeFunc(currentUser?._id, track.track, "dislike");
           }}
         >
           <X fill="#e11d48" color="#e11d48" />
@@ -114,7 +130,7 @@ export const SwipeTrack = ({
         <button
           className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
           onClick={() => {
-            handleAction("like");
+            likeOrDislikeFunc(currentUser?._id, track.track, "like");
           }}
         >
           <Heart fill="#1DB954" color="#1DB954" />
@@ -134,9 +150,11 @@ export const SwipeTrack = ({
         </button>
         <button
           className="flex py-2 justify-center items-center text-white flex-col cursor-pointer hover:bg-white/10 rounded-lg p-2 transition"
-          onClick={onSaveToggle}
+          onClick={() => saveOrUnsaveFunc(currentUser?._id, track.track)}
         >
-          {saved ? (
+          {currentUser?.saved
+            ?.map((song) => song.id)
+            .includes(track.track.id) ? (
             <Bookmark color="currentColor" fill="currentColor" />
           ) : (
             <Bookmark color="currentColor" />

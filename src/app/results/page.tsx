@@ -33,65 +33,58 @@ export default function Page() {
 
   const [page, setPage] = useState(1);
 
-  // Sync page state with URL params
   useEffect(() => {
-    if (pageNumber) {
-      const parsedPage = parseInt(pageNumber);
-      if (parsedPage !== page) {
-        setPage(parsedPage);
+    const pageFromUrl = pageNumber ? parseInt(pageNumber) : 1;
+    setPage(pageFromUrl);
+
+    if (!types || types.length === 0 || !searchInput) return;
+
+    let active = true;
+
+    const fetchData = async () => {
+      let LIMIT = 20;
+      if (types.split(",").length === 1) {
+        LIMIT = 18;
+      } else if (types.split(",").length === 2) {
+        LIMIT = 9;
+      } else if (types.split(",").length === 3) {
+        LIMIT = 6;
       }
-    } else {
-      setPage(1);
-    }
-  }, [pageNumber]);
 
-  // Reset page when search params change
-  useEffect(() => {
-    setPage(1);
-  }, [searchInput, types]);
+      const offset = (pageFromUrl - 1) * LIMIT;
 
-  // Search effect
-  useEffect(() => {
-    if (types && types.length > 0) {
-      search();
-    }
-  }, [types, searchInput, page]);
+      await fetch("/api/spotify-token", { method: "POST" }); // ensure token is set
+      try {
+        if (active) setLoading(true);
+        const res = await fetch(
+          `http://localhost:3000/api/get/result_search?q=${searchInput}&type=${types}&limit=${LIMIT}&offset=${offset}`
+        );
 
-  const search = useCallback(async () => {
-    if (!searchInput || !types) return;
+        const { searchData } = await res.json();
+        
+        if (active) {
+          setArtistSearchResults([]);
+          setAlbumSearchResults([]);
+          setSongSearchResults([]);
 
-    let LIMIT = 20;
-    if (types.split(",").length === 1) {
-      LIMIT = 18;
-    } else if (types.split(",").length === 2) {
-      LIMIT = 9;
-    } else if (types.split(",").length === 3) {
-      LIMIT = 6;
-    }
+          if (searchData.artists)
+            setArtistSearchResults(searchData.artists.items);
+          if (searchData.albums) setAlbumSearchResults(searchData.albums.items);
+          if (searchData.tracks) setSongSearchResults(searchData.tracks.items);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
 
-    const offset = (page - 1) * LIMIT;
+    fetchData();
 
-    await fetch("/api/spotify-token", { method: "POST" }); // ensure token is set
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `http://localhost:3000/api/get/result_search?q=${searchInput}&type=${types}&limit=${LIMIT}&offset=${offset}`
-      );
-
-      const { searchData } = await res.json();
-      setArtistSearchResults([]);
-      setAlbumSearchResults([]);
-      setSongSearchResults([]);
-
-      if (searchData.artists) setArtistSearchResults(searchData.artists.items);
-      if (searchData.albums) setAlbumSearchResults(searchData.albums.items);
-      if (searchData.tracks) setSongSearchResults(searchData.tracks.items);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [types, searchInput, page]);
+    return () => {
+      active = false;
+    };
+  }, [pageNumber, searchInput, types]);
 
   async function searchAndGoToPage(
     entity: any,

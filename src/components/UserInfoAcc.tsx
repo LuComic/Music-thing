@@ -32,7 +32,7 @@ export const UserInfoAcc = ({
         {platformsAndUser?.platforms.map((plat) => (
           <div
             key={plat}
-            className={`${plat === "google" ? "border-white/80 text-white/80" : "border-[#564274] text-[#564274]"} rounded-md w-max px-2.5 py-1 text-center border`}
+            className={`${plat === "google" ? "border-white/80 " : "border-[#564274]"} text-white/80 rounded-md w-max px-2.5 py-1 text-center border`}
           >
             {plat.charAt(0).toUpperCase() + plat.slice(1)}
           </div>

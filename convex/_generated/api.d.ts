@@ -10,6 +10,8 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as otherFunctions from "../otherFunctions.js";
+import type * as trackFunctions from "../trackFunctions.js";
 import type * as userFunctions from "../userFunctions.js";
 
 import type {
@@ -21,6 +23,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  otherFunctions: typeof otherFunctions;
+  trackFunctions: typeof trackFunctions;
   userFunctions: typeof userFunctions;
 }>;
 

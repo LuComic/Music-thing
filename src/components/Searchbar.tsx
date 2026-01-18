@@ -56,8 +56,8 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
       await fetch("/api/spotify-token", { method: "POST" });
       const res = await fetch(
         `/api/get/search_suggestions?q=${encodeURIComponent(
-          searchInput
-        )}&type=${searchTypes.join(",")}`
+          searchInput,
+        )}&type=${searchTypes.join(",")}`,
       );
       const { searchData } = await res.json();
 
@@ -67,34 +67,27 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
         (searchData?.albums && searchData?.tracks)
       ) {
         setArtistSearchResults(
-          searchData.artists ? searchData.artists.items.slice(0, 3) : []
+          searchData.artists ? searchData.artists.items.slice(0, 3) : [],
         );
         setAlbumSearchResults(
-          searchData.albums ? searchData.albums.items.slice(0, 3) : []
+          searchData.albums ? searchData.albums.items.slice(0, 3) : [],
         );
         setSongSearchResults(
-          searchData.tracks ? searchData.tracks.items.slice(0, 3) : []
+          searchData.tracks ? searchData.tracks.items.slice(0, 3) : [],
         );
       } else {
         setArtistSearchResults(
-          searchData?.artists ? searchData.artists.items.slice(0, 6) : []
+          searchData?.artists ? searchData.artists.items.slice(0, 6) : [],
         );
         setAlbumSearchResults(
-          searchData?.albums ? searchData.albums.items.slice(0, 6) : []
+          searchData?.albums ? searchData.albums.items.slice(0, 6) : [],
         );
         setSongSearchResults(
-          searchData?.tracks ? searchData.tracks.items.slice(0, 6) : []
+          searchData?.tracks ? searchData.tracks.items.slice(0, 6) : [],
         );
       }
     }
   }, [allSearch, artistSearch, songSearch, albumSearch, searchInput]);
-
-  // Trigger search when filter changes (every 2 characters)
-  useEffect(() => {
-    if (searchInput.length >= 2) {
-      search();
-    }
-  }, [artistSearch, songSearch, albumSearch]);
 
   // Debounce effect for the input
   useEffect(() => {
@@ -107,14 +100,14 @@ export const Searchbar = ({ closeSearching }: SearchbarProps) => {
 
     const handler = setTimeout(() => {
       search();
-    }, 300);
+    }, 250);
 
     return () => clearTimeout(handler);
   }, [searchInput, search]);
 
   async function searchAndGoToPage(
     entity: any,
-    type: "track" | "artist" | "album"
+    type: "track" | "artist" | "album",
   ) {
     if (!entity) return;
 

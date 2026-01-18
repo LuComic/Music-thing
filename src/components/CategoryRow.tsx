@@ -8,8 +8,6 @@ import {
 import { useEffect, useState } from "react";
 import { getHybridNavigationUrl } from "@/lib/hybridNavigation";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
-import { LoadingOnClick } from "./LoadingOnClick";
 import { DiscoverDiv } from "./DiscoverDiv";
 
 interface CategoryRowProps {
@@ -30,8 +28,8 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
         await fetch("/api/spotify-token", { method: "POST" });
         const res = await fetch(
           `/api/get/playlist_tracks?q=${encodeURIComponent(
-            query
-          )}&track_limit=50&track_offset=0`
+            query,
+          )}&track_limit=50&track_offset=0`,
         );
         const data = await res.json();
 
@@ -49,7 +47,7 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
 
   async function searchAndGoToPage(
     entity: any,
-    type: "track" | "artist" | "album"
+    type: "track" | "artist" | "album",
   ) {
     if (!entity) return;
     const targetUrl = await getHybridNavigationUrl(entity, type);

@@ -19,7 +19,7 @@ export default function Home() {
   // Track liked songs with their Spotify IDs
   const [likedTracks, setLikedTracks] = useState<Set<string>>(new Set());
   const [likedTrackStates, setLikedTrackStates] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
 
   // Track displayed song IDs to prevent duplicates
@@ -43,8 +43,8 @@ export default function Home() {
         await fetch("/api/spotify-token", { method: "POST" });
         const res = await fetch(
           `/api/get/playlist_tracks?q=${encodeURIComponent(
-            popularPlaylists.current[0]
-          )}&playlist_limit=10&track_limit=10&track_offset=0`
+            popularPlaylists.current[0],
+          )}&playlist_limit=10&track_limit=10&track_offset=0`,
         );
         const data = await res.json();
         const initialTracks = (data.tracks ?? []).slice(0, 10);
@@ -97,8 +97,8 @@ export default function Home() {
           const exclude = Array.from(displayedTrackIds.current).join(",");
           const reccoRes = await fetch(
             `/api/get/reccobeats_recommendations?seeds=${encodeURIComponent(
-              seeds
-            )}&size=10&exclude=${encodeURIComponent(exclude)}`
+              seeds,
+            )}&size=10&exclude=${encodeURIComponent(exclude)}`,
           );
 
           if (reccoRes.ok) {
@@ -107,7 +107,7 @@ export default function Home() {
           } else {
             // ReccoBeats might not have these tracks indexed, fall through to playlist strategy
             console.log(
-              "ReccoBeats couldn't find recommendations for these seeds, using playlist fallback"
+              "ReccoBeats couldn't find recommendations for these seeds, using playlist fallback",
             );
           }
         } catch (error) {
@@ -128,24 +128,24 @@ export default function Home() {
 
         const probeRes = await fetch(
           `/api/get/playlist_tracks?q=${encodeURIComponent(
-            playlistQuery
-          )}&playlist_limit=10&track_limit=1&track_offset=0`
+            playlistQuery,
+          )}&playlist_limit=10&track_limit=1&track_offset=0`,
         );
         const probeData = await probeRes.json();
         const total = typeof probeData.total === "number" ? probeData.total : 0;
         const randomOffset = Math.floor(
-          Math.random() * Math.max(0, total - 10)
+          Math.random() * Math.max(0, total - 10),
         );
 
         const tracksRes = await fetch(
           `/api/get/playlist_tracks?q=${encodeURIComponent(
-            playlistQuery
-          )}&playlist_limit=10&track_limit=10&track_offset=${randomOffset}`
+            playlistQuery,
+          )}&playlist_limit=10&track_limit=10&track_offset=${randomOffset}`,
         );
         const tracksData = await tracksRes.json();
         newTracks = (tracksData.tracks ?? []).filter(
           (track: any) =>
-            track.track?.id && !displayedTrackIds.current.has(track.track.id)
+            track.track?.id && !displayedTrackIds.current.has(track.track.id),
         );
       }
 
@@ -169,7 +169,7 @@ export default function Home() {
 
   async function searchAndGoToPage(
     entity: any,
-    type: "track" | "artist" | "album"
+    type: "track" | "artist" | "album",
   ) {
     if (!entity) return;
     const targetUrl = await getHybridNavigationUrl(entity, type);
@@ -233,6 +233,7 @@ export default function Home() {
   }
 
   const currentTrack = tracks[currentIndex];
+  console.log(currentTrack);
 
   return (
     <div className="bg-black h-screen max-w-screen w-screen flex items-center justify-center p-2">

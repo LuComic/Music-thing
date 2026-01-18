@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "./ui/input";
 import {
   Accordion,
@@ -17,6 +17,8 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import { Pencil } from "lucide-react";
+import { api } from "../../convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
 
 export const DiscoverCustomization = () => {
   const router = useRouter();
@@ -33,20 +35,57 @@ export const DiscoverCustomization = () => {
   const [title5, setTitle5] = useState("");
   const [query5, setQuery5] = useState("");
 
-  const saveAndDiscover = () => {
-    const params = new URLSearchParams();
-    if (title1) params.set("field1", title1);
-    if (query1) params.set("query1", query1);
-    if (title2) params.set("field2", title2);
-    if (query2) params.set("query2", query2);
-    if (title3) params.set("field3", title3);
-    if (query3) params.set("query3", query3);
-    if (title4) params.set("field4", title4);
-    if (query4) params.set("query4", query4);
-    if (title5) params.set("field5", title5);
-    if (query5) params.set("query5", query5);
+  const addDiscover = useMutation(api.otherFunctions.customizeDiscover);
+  const currentUser = useQuery(api.userFunctions.currentUser);
 
-    router.push(`/discover?${params.toString()}`);
+  const saveAndDiscover = async () => {
+    if (title1 && query1 && currentUser) {
+      await addDiscover({
+        userId: currentUser?._id,
+        customization: {
+          title: title1,
+          query: query1,
+        },
+      });
+    }
+    if (title2 && query2 && currentUser) {
+      await addDiscover({
+        userId: currentUser?._id,
+        customization: {
+          title: title2,
+          query: query2,
+        },
+      });
+    }
+    if (title3 && query3 && currentUser) {
+      await addDiscover({
+        userId: currentUser?._id,
+        customization: {
+          title: title3,
+          query: query3,
+        },
+      });
+    }
+    if (title4 && query4 && currentUser) {
+      await addDiscover({
+        userId: currentUser?._id,
+        customization: {
+          title: title4,
+          query: query4,
+        },
+      });
+    }
+    if (title5 && query5 && currentUser) {
+      await addDiscover({
+        userId: currentUser?._id,
+        customization: {
+          title: title5,
+          query: query5,
+        },
+      });
+    }
+
+    router.push(`/discover`);
   };
 
   return (
@@ -222,7 +261,9 @@ export const DiscoverCustomization = () => {
             </DrawerClose>
             <button
               className="cursor-pointer text-base text-black rounded-lg hover:bg-white/80  px-3 py-1.5 bg-white transition"
-              onClick={() => saveAndDiscover()}
+              onClick={async () => {
+                await saveAndDiscover();
+              }}
             >
               Save
             </button>

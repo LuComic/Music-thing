@@ -6,7 +6,7 @@ export const Footer = () => {
       Song app <span className="hidden md:inline">|</span>{" "}
       <a
         className="inline text-[#1DB954] visited:text-[#1DB954]"
-        href="https://jaager.vercel.app/"
+        href="https://jaager.dev/"
         target="_blank"
       >
         Lukas Jääger

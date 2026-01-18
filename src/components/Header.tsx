@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
 export default function Header() {
-  let [searching, setSearching] = useState(false);
+  const [searching, setSearching] = useState(false);
   const pathname = usePathname();
 
   function closeSearching() {
@@ -49,7 +49,7 @@ export default function Header() {
             </Link>
             <button
               onClick={() => setSearching(true)}
-              className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
+              className={`text-white text-lg font-semibold cursor-pointer duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
                 pathname === "/results" && "underline"
               } underline-offset-4`}
             >

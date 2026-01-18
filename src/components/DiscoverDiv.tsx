@@ -14,11 +14,13 @@ export const DiscoverDiv = ({ trackItem }: { trackItem: any }) => {
     >
       {onClickLoading && <LoadingOnClick size="medium" />}
       <div className="aspect-square bg-slate-400 w-full rounded-md overflow-hidden relative">
-        <img
-          className="object-cover w-full h-full"
-          alt={`${trackItem.track.name} image`}
-          src={trackItem.track.album.images[0].url}
-        />
+        {trackItem.track.album.images && trackItem.track.album.images[0] && (
+          <img
+            className="object-cover w-full h-full"
+            alt={`${trackItem.track.name} image`}
+            src={trackItem.track.album.images[0].url}
+          />
+        )}
       </div>
       <div className="flex flex-col items-start justify-start w-full">
         <h1 className="text-left font-semibold text-white w-full">

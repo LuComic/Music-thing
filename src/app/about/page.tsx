@@ -65,7 +65,7 @@ export default function Page() {
               it matches with both my interests.
               <a
                 className="inline text-[#1DB954] visited:text-[#1DB954] hover:text-[#1db954dd] transition ml-1"
-                href="https://jaager.vercel.app/"
+                href="https://jaager.dev/"
                 target="_blank"
               >
                 Here's my portfolio
