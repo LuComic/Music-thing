@@ -39,12 +39,15 @@ export default function Page() {
     setPage(pageFromUrl);
   }, [pageNumber, initialTypes]);
 
+  const combinedResults = [...likedSearchResults, ...savedSearchResults];
 
+  // Sort by created_at descending
+  combinedResults.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
+
+  // Map to avoid duplicate songs. Map's keys are unique
   const allSongs = Array.from(
-    new Map(
-      [...likedSearchResults, ...savedSearchResults].map((s) => [s.id, s]),
-    ).values(),
-  );
+    new Map(combinedResults.map((s) => [s.song?.id, s.song])).values(),
+  ).filter((s) => s !== undefined);
   const totalPages = Math.ceil(allSongs.length / LIMIT);
 
   const handlePageChange = (newPage: number) => {
@@ -82,7 +85,6 @@ export default function Page() {
     }`;
     router.push(targetUrl);
   };
-
 
   const currentUser = useQuery(api.userFunctions.currentUser);
 

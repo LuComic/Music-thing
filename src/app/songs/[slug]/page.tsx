@@ -64,7 +64,7 @@ export default function Page() {
 
   let currentList = [];
   if (currentUser && currentUser.liked) {
-    currentList = currentUser.liked.map((song) => song.id);
+    currentList = currentUser.liked.map((obj) => obj.song.id);
   }
 
   const likeOrDislike = useMutation(api.trackFunctions.likeOrUnlikeTrack);
@@ -88,7 +88,7 @@ export default function Page() {
   // Saving or unsaving a song
   let currentSaved = [];
   if (currentUser && currentUser.saved) {
-    currentSaved = currentUser.saved.map((song) => song.id);
+    currentSaved = currentUser.saved.map((obj) => obj.song.id);
   }
 
   const saveOrUnsave = useMutation(api.trackFunctions.saveOrUnsaveTrack);

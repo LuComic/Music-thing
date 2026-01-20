@@ -12,8 +12,22 @@ export default defineSchema({
     phone: v.optional(v.string()),
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
-    liked: v.optional(v.array(v.any())),
-    saved: v.optional(v.array(v.any())),
+    liked: v.optional(
+      v.array(
+        v.object({
+          song: v.any(),
+          created_at: v.number(),
+        }),
+      ),
+    ),
+    saved: v.optional(
+      v.array(
+        v.object({
+          song: v.any(),
+          created_at: v.number(),
+        }),
+      ),
+    ),
     discover: v.optional(
       v.array(
         v.object({

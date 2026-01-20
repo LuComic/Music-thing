@@ -15,18 +15,21 @@ export const likeOrUnlikeTrack = mutation({
     const currentLiked = user.liked || [];
     let currentLikedIds = [];
     if (user.liked) {
-      currentLikedIds = user.liked.map((song) => song.id) || []; // Handle case where liked doesn't exist yet
+      currentLikedIds = user.liked.map((obj) => obj.song.id) || []; // Handle case where liked doesn't exist yet
     }
 
     if (args.operation === "like") {
       if (!currentLikedIds?.includes(args.track.id)) {
         await ctx.db.patch("users", args.userId, {
-          liked: [...currentLiked, args.track],
+          liked: [
+            ...currentLiked,
+            { song: args.track, created_at: Date.now() },
+          ],
         });
       }
     } else if (args.operation === "dislike") {
       await ctx.db.patch("users", args.userId, {
-        liked: currentLiked.filter((t) => t.id !== args.track.id),
+        liked: currentLiked.filter((t) => t.song.id !== args.track.id),
       });
     }
   },
@@ -45,16 +48,16 @@ export const saveOrUnsaveTrack = mutation({
     const currentSaved = user.saved || []; // Handle case where liked doesn't exist yet
     let savedIds = [];
     if (user.saved) {
-      savedIds = user.saved.map((song) => song.id);
+      savedIds = user.saved.map((obj) => obj.song.id);
     }
 
     if (!savedIds.includes(args.track.id)) {
       await ctx.db.patch("users", args.userId, {
-        saved: [...currentSaved, args.track],
+        saved: [...currentSaved, { song: args.track, created_at: Date.now() }],
       });
     } else {
       await ctx.db.patch("users", args.userId, {
-        saved: currentSaved.filter((t) => t.id !== args.track.id),
+        saved: currentSaved.filter((t) => t.song.id !== args.track.id),
       });
     }
   },

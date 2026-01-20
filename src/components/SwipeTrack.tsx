@@ -153,7 +153,7 @@ export const SwipeTrack = ({
           onClick={() => saveOrUnsaveFunc(currentUser?._id, track.track)}
         >
           {currentUser?.saved
-            ?.map((song) => song.id)
+            ?.map((obj) => obj.song.id)
             .includes(track.track.id) ? (
             <Bookmark color="currentColor" fill="currentColor" />
           ) : (
