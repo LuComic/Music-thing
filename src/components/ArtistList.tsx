@@ -1,12 +1,17 @@
 "use client";
 
 import { api } from "../../convex/_generated/api";
-import { useQuery } from "convex/react";
+import { Preloaded } from "convex/react";
 import { ArtistListItem } from "./ArtistListItem";
+import { usePreloadedQuery } from "convex/react";
 
-export const ArtistList = () => {
-  const user = useQuery(api.userFunctions.currentUser);
-  const liked = user?.liked || [];
+export const ArtistList = ({
+  user,
+}: {
+  user: Preloaded<typeof api.userFunctions.currentUser>;
+}) => {
+  const currentUser = usePreloadedQuery(user);
+  const liked = currentUser?.liked || [];
 
   const artistCounts: Record<
     string,

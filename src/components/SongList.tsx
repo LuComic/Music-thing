@@ -1,12 +1,16 @@
 "use client";
 
 import { api } from "../../convex/_generated/api";
-import { useQuery } from "convex/react";
 import { SongListItem } from "./SongListItem";
+import { Preloaded, usePreloadedQuery } from "convex/react";
 
-export const SongList = () => {
-  const user = useQuery(api.userFunctions.currentUser);
-  const liked = user?.liked || [];
+export const SongList = ({
+  user,
+}: {
+  user: Preloaded<typeof api.userFunctions.currentUser>;
+}) => {
+  const currentUser = usePreloadedQuery(user);
+  const liked = currentUser?.liked || [];
 
   // Sort by created_at descending
   liked.sort((a, b) => (b.created_at || 0) - (a.created_at || 0)).slice(0, 5);
