@@ -46,21 +46,21 @@ export const EditAccountModal = ({
   const [newUserNameError, setNewUserNameError] = useState(false);
   const [newMail, setNewMail] = useState("");
 
-  const userId = usePreloadedQuery(user)?._id;
+  const preloadedUser = usePreloadedQuery(user);
   const currentUser = useQuery(
     api.userFunctions.getUserWithAccounts,
-    userId ? { userId } : "skip",
+    preloadedUser ? { userId: preloadedUser._id } : "skip",
   );
 
   const updateName = useMutation(api.userFunctions.updateUserName);
   const updateEmail = useMutation(api.userFunctions.updateUserEmail);
 
   const updateInfo = async () => {
-    if (currentUser) {
+    if (preloadedUser) {
       if (isValidUsername(newUserName)) {
         setNewUserNameError(false);
         await updateName({
-          userId: currentUser._id,
+          userId: preloadedUser._id,
           newName: newUserName,
         });
         closeEditModal();
@@ -70,7 +70,7 @@ export const EditAccountModal = ({
 
       if (newMail.trim() && newMail.trim().length >= 3) {
         await updateEmail({
-          userId: currentUser._id,
+          userId: preloadedUser._id,
           newEmail: newMail,
         });
         closeEditModal();
@@ -119,7 +119,7 @@ export const EditAccountModal = ({
               <span className="font-medium w-max">
                 New username
                 <span className="hidden font-normal md:inline text-slate-400 ml-2">
-                  {currentUser?.name}
+                  {preloadedUser?.name}
                 </span>
               </span>
               <Input
@@ -142,7 +142,7 @@ export const EditAccountModal = ({
               <span className="font-medium w-max">
                 New email
                 <span className="hidden font-normal md:inline text-slate-400 ml-2">
-                  {currentUser?.email}
+                  {preloadedUser?.email}
                 </span>
               </span>
               <Input
@@ -156,12 +156,12 @@ export const EditAccountModal = ({
             <div className="flex flex-col items-start justify-start gap-2 w-full md:text-lg text-base">
               <div className="flex flex-col gap-2 font-medium w-full">
                 Connected Accounts
-                {userId &&
+                {currentUser?._id &&
                   currentUser?.platforms.map((plat) => (
                     <RemoveProvider
                       closeEditModal={closeEditModal}
                       plat={plat}
-                      userId={userId}
+                      userId={currentUser._id}
                       key={plat}
                     />
                   ))}
@@ -187,7 +187,7 @@ export const EditAccountModal = ({
         </div>
       )}
       <button
-        className="md:text-lg text-base w-max cursor-pointer text-white underline-offset-4 hover:text-white/80 transition mt-4 outline-none inline ml-4"
+        className="md:text-lg text-base w-max cursor-pointer text-white underline-offset-4 hover:text-white/80 transition outline-none inline ml-4"
         onClick={openEditModal}
       >
         <Pencil size={18} />

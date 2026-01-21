@@ -27,7 +27,7 @@ export default function Page() {
   });
 
   return (
-    <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center px-4">
+    <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center">
       <div className="flex flex-col items-start justify-start gap-4 w-full md:w-[80%] p-6 md:p-10 md:pt-20">
         <DiscoverCustomization />
         <div className="flex flex-col items-start justify-start gap-8 w-full">

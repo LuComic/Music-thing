@@ -37,7 +37,7 @@ export default function Page() {
         const res = await fetch(
           "http://localhost:3000/api/get/artist?spotify_id=" +
             spotifyId +
-            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : "")
+            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : ""),
         );
 
         const { spotify, musicbrainz, albumData } = await res.json();
@@ -68,12 +68,12 @@ export default function Page() {
             (
               (set) => (rel: any) =>
                 !set.has(rel.artist.id) && set.add(rel.artist.id)
-            )(new Set())
+            )(new Set()),
           )
       : [];
 
   return (
-    <div className="bg-black min-h-screen w-screen flex items-start justify-center px-4 text-white">
+    <div className="bg-black min-h-screen w-screen flex items-start justify-center text-white">
       <div className="flex flex-col md:grid grid-cols-3 gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-40">
         <div className="flex flex-col gap-6 col-span-1">
           <Link

@@ -1,13 +1,12 @@
-export default function page() {
+import { ArtistList } from "@/components/ArtistList";
+import { SongList } from "@/components/SongList";
+
+export default async function page() {
   return (
-    <>
-      <p>Display stuff like:</p>
-      <br />
-      <p>Most liked and like activity</p>
-      <p>Favoutite genres</p>
-      <p>Recents</p>
-      <p>Wrapped kind of thing</p>
-      <p>Top artists/songs/albums</p>
-    </>
+    <div className="flex flex-col gap-4">
+      <h1 className="md:text-2xl text-xl font-semibold mb-2">Overall</h1>
+      <ArtistList />
+      <SongList />
+    </div>
   );
 }

@@ -57,11 +57,11 @@ export default function Page() {
       try {
         if (active) setLoading(true);
         const res = await fetch(
-          `http://localhost:3000/api/get/result_search?q=${searchInput}&type=${types}&limit=${LIMIT}&offset=${offset}`
+          `http://localhost:3000/api/get/result_search?q=${searchInput}&type=${types}&limit=${LIMIT}&offset=${offset}`,
         );
 
         const { searchData } = await res.json();
-        
+
         if (active) {
           setArtistSearchResults([]);
           setAlbumSearchResults([]);
@@ -88,7 +88,7 @@ export default function Page() {
 
   async function searchAndGoToPage(
     entity: any,
-    type: "track" | "artist" | "album"
+    type: "track" | "artist" | "album",
   ) {
     if (!entity) return;
     const targetUrl = await getHybridNavigationUrl(entity, type);
@@ -103,7 +103,7 @@ export default function Page() {
         "&types=" +
         types +
         "&page=" +
-        newPage
+        newPage,
     );
   };
 
@@ -122,7 +122,7 @@ export default function Page() {
 
   if (!types || !searchInput || !hasResults) {
     return (
-      <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center px-4 text-white">
+      <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center text-white">
         <div className="flex flex-col items-start justify-start gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-20 min-h-screen">
           <div className="flex flex-col gap-4 items-start justify-start w-full animate-pulse">
             <div className="h-10 w-1/2 bg-slate-600 rounded-md"></div>
@@ -172,7 +172,7 @@ export default function Page() {
   }
 
   return (
-    <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center px-4 text-white">
+    <div className="bg-black min-h-screen max-w-screen w-screen flex items-start justify-center text-white">
       <div className="flex flex-col items-start justify-start gap-8 w-full md:w-[80%] p-6 md:p-10 md:pt-20 min-h-screen">
         <div className="flex flex-col gap-4 items-start justify-start w-full">
           <SearchbarForResults
