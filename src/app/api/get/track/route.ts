@@ -5,7 +5,6 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const urlSearchParams = url.searchParams;
   const spotifyId = urlSearchParams.get("spotify_id");
-  const musicbrainzId = urlSearchParams.get("musicbrainz_id");
 
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("spotify_access_token")?.value;
@@ -26,49 +25,52 @@ export async function GET(req: Request) {
     },
   };
 
-  // Get info for the Spotify track
-  const spotifyPromise = fetch(
-    `https://api.spotify.com/v1/tracks/${spotifyId}`,
-    searchParams
-  ).then(async (res) => {
-    if (!res.ok) {
-      const body = await res.text();
-      throw new Error(`Spotify track error ${res.status}: ${body}`);
-    }
-    return res.json();
-  });
-
-  // Get info for the Musicbrainz track
-  const musicBrainzPromise = musicbrainzId
-    ? mbApi.lookup("recording", musicbrainzId, [
-        "artists",
-        "releases",
-        "tags",
-        "isrcs",
-      ])
-    : Promise.resolve(null);
-
-  const [spotifyData, musicbrainzData] = await Promise.allSettled([
-    spotifyPromise,
-    musicBrainzPromise,
-  ]);
-
-  if (spotifyData.status === "fulfilled") {
-    results.spotify = spotifyData.value;
-  } else {
-    console.error("Spotify fetch error:", spotifyData.reason);
-    return Response.json(
-      { error: "No data available Spotify track" },
-      { status: 404 }
+  try {
+    // 1. Get info for the Spotify track
+    const spotifyRes = await fetch(
+      `https://api.spotify.com/v1/tracks/${spotifyId}`,
+      searchParams
     );
-  }
 
-  if (musicbrainzData.status === "fulfilled") {
-    results.musicbrainz = musicbrainzData.value;
-  } else {
-    console.log(
-      "No musicbrainz data for track from backend api",
-      musicbrainzData.reason
+    if (!spotifyRes.ok) {
+      const body = await spotifyRes.text();
+      throw new Error(`Spotify track error ${spotifyRes.status}: ${body}`);
+    }
+
+    const spotifyData = await spotifyRes.json();
+    results.spotify = spotifyData;
+
+    // 2. Search and Get info for the Musicbrainz track using Spotify data
+    const artistName = spotifyData.artists?.[0]?.name;
+    const trackName = spotifyData.name;
+
+    if (artistName && trackName) {
+      try {
+        const query = `artist:"${artistName}" AND recording:"${trackName}"`;
+        const searchResult = await mbApi.search("recording", {
+          query,
+          limit: 1,
+        });
+        const musicbrainzId = searchResult?.recordings?.[0]?.id;
+
+        if (musicbrainzId) {
+          const musicbrainzData = await mbApi.lookup(
+            "recording",
+            musicbrainzId,
+            ["artists", "releases", "tags", "isrcs"]
+          );
+          results.musicbrainz = musicbrainzData;
+        }
+      } catch (mbError) {
+        console.error("MusicBrainz lookup error:", mbError);
+        // We don't fail the whole request if MB fails, just log it
+      }
+    }
+  } catch (error: any) {
+    console.error("API Error:", error);
+    return Response.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
     );
   }
 

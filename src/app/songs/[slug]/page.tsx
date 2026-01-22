@@ -19,7 +19,6 @@ export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const spotifyId = searchParams.get("spotify_id");
-  const musicbrainzId = searchParams.get("musicbrainz_id");
 
   const [spotifyRes, setSpotifyRes] = useState<any>(null);
   const [musicbrainzRes, setMusicbrainzRes] = useState<any>(null);
@@ -43,9 +42,7 @@ export default function Page() {
       if (!spotifyId) return;
       try {
         const res = await fetch(
-          "http://localhost:3000/api/get/track?spotify_id=" +
-            spotifyId +
-            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : ""),
+          "http://localhost:3000/api/get/track?spotify_id=" + spotifyId,
         );
 
         const { spotify, musicbrainz } = await res.json();
@@ -57,7 +54,7 @@ export default function Page() {
     };
 
     getTracks();
-  }, [spotifyId, musicbrainzId]);
+  }, [spotifyId]);
 
   // Liking or disliking the song with convex
   const currentUser = useQuery(api.userFunctions.currentUser);
@@ -100,7 +97,7 @@ export default function Page() {
     });
   };
 
-  if (!spotifyRes || (musicbrainzId && !musicbrainzRes)) {
+  if (!spotifyRes) {
     return (
       <div className="bg-black h-screen w-screen flex items-center justify-center">
         <Spinner className="text-white size-8" />
@@ -154,8 +151,7 @@ export default function Page() {
               {spotifyRes.artists[0].name}
             </button>
           </div>
-          {musicbrainzId &&
-            musicbrainzRes &&
+          {musicbrainzRes &&
             musicbrainzRes.tags &&
             musicbrainzRes.tags.length > 0 && (
               <div>
@@ -210,8 +206,7 @@ export default function Page() {
               </dd>
             </div>
           </dl>
-          {musicbrainzId &&
-            musicbrainzRes &&
+          {musicbrainzRes &&
             musicbrainzRes.releases &&
             musicbrainzRes.releases.length > 0 && (
               <Accordion type="single" collapsible>

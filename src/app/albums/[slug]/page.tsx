@@ -16,7 +16,6 @@ export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const spotifyId = searchParams.get("spotify_id");
-  const musicbrainzId = searchParams.get("musicbrainz_id");
 
   const [spotifyRes, setSpotifyRes] = useState<any>(null);
   const [musicbrainzRes, setMusicbrainzRes] = useState<any>(null);
@@ -40,9 +39,7 @@ export default function Page() {
       if (!spotifyId) return;
       try {
         const res = await fetch(
-          "http://localhost:3000/api/get/album?spotify_id=" +
-            spotifyId +
-            (musicbrainzId ? "&musicbrainz_id=" + musicbrainzId : ""),
+          "http://localhost:3000/api/get/album?spotify_id=" + spotifyId,
         );
 
         const { spotify, musicbrainz } = await res.json();
@@ -54,9 +51,9 @@ export default function Page() {
     };
 
     getAlbums();
-  }, [spotifyId, musicbrainzId]);
+  }, [spotifyId]);
 
-  if (!spotifyRes || (musicbrainzId && !musicbrainzRes)) {
+  if (!spotifyRes) {
     return (
       <div className="bg-black h-screen w-screen flex items-center justify-center">
         <Spinner className="text-white size-8" />
@@ -94,20 +91,22 @@ export default function Page() {
               </button>
             )}
           </div>
-          {musicbrainzRes?.tags && musicbrainzRes.tags.length > 0 && (
-            <div>
-              <div className="flex flex-wrap gap-2">
-                {musicbrainzRes.tags.slice(0, 5).map((tag: any) => (
-                  <span
-                    key={tag.name}
-                    className="bg-[#1DB954]/80 text-white px-2 py-1 rounded-md text-sm"
-                  >
-                    {tag.name}
-                  </span>
-                ))}
+          {musicbrainzRes &&
+            musicbrainzRes.tags &&
+            musicbrainzRes.tags.length > 0 && (
+              <div>
+                <div className="flex flex-wrap gap-2">
+                  {musicbrainzRes.tags.slice(0, 5).map((tag: any) => (
+                    <span
+                      key={tag.name}
+                      className="bg-[#1DB954]/80 text-white px-2 py-1 rounded-md text-sm"
+                    >
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
         <div
           className="flex-1 flex flex-col gap-4 text-white col-span-2 overflow-y-scroll"
