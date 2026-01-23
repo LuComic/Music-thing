@@ -57,11 +57,12 @@ export default function Header() {
               <span className="hidden md:inline">Search</span>
               <KbdGroup className="hidden sm:inline">
                 <Kbd className="bg-white/20 text-white">⌘</Kbd>
-                <Kbd className="bg-white/20 text-white ml-px">K</Kbd>
+                <Kbd className="bg-white/20 text-white ml-1">K</Kbd>
               </KbdGroup>
             </button>
             <Link
               href="/yours?types=all"
+              onClick={() => console.log("click")}
               className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
                 pathname === "/yours" && "underline"
               } underline-offset-4`}
@@ -71,6 +72,7 @@ export default function Header() {
             </Link>
             <Link
               href="/discover"
+              onClick={() => console.log("click")}
               className={`text-white text-lg font-semibold duration-150 hover:text-white/80 flex gap-2 items-center justify-center ${
                 pathname === "/discover" && "underline"
               } underline-offset-4`}

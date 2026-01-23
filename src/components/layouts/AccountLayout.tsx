@@ -18,7 +18,7 @@ export default async function Layout({
           </h3>
           <ProfileView user={user} />
           <div className="md:grid flex flex-col grid-cols-5 w-full h-full">
-            <div className="w-full h-max md:gap-2 gap-1 flex flex-row md:flex-col items-start justify-between p-1 md:p-2 md:bg-transparent bg-slate-400/20 md:rounded-none rounded-lg">
+            <div className="w-full h-max md:gap-2 gap-1 flex flex-row md:flex-col items-start justify-between p-1 md:pb-2 md:pt-2 md:pr-2 md:bg-transparent bg-slate-400/20 md:rounded-none rounded-lg">
               <AccountInformation />
             </div>
             <div className="col-span-4 w-full px-4 md:pt-0 pt-6 border-l-slate-400 md:border-l">

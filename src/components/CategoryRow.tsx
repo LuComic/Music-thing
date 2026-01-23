@@ -104,8 +104,8 @@ export function CategoryRow({ title, query }: CategoryRowProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="cursor-pointer" />
-        <CarouselNext className="cursor-pointer" />
+        <CarouselPrevious className="cursor-pointer md:-left-12 -left-5 md:size-8 size-6 text-black" />
+        <CarouselNext className="cursor-pointer md:-right-12 -right-5 md:size-8 size-6 text-black" />
       </Carousel>
     </div>
   );
